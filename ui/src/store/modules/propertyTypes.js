@@ -53,14 +53,14 @@ export default {
         // store local
         commit('addPropertyType', {
           ...state.new,
-          id: result.body
+          id: result.data
         })
 
         // reset new
         commit('resetNew')
 
         // resolve
-        resolve(result.body)
+        resolve(result.data)
       })
     }
   }

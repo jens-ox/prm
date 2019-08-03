@@ -30,7 +30,7 @@
       <button
         class="primary large"
         :class="{ disabled: !saveable }"
-        @click="storePerson"
+        @click="storePerson(false)"
       >Save Person</button>
       <button
         class="large"

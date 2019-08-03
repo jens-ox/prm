@@ -85,4 +85,37 @@ people.get('/by-property-type/:type', async (req, res, next) => {
   res.json(result)
 })
 
+people.get('/by-id/:id', async (req, res, next) => {
+  // check required props
+  if (!req.params.id) return next(new Error('no id specified'))
+  const id = req.params.id
+
+  // load data
+  const result = await knex
+    .select('*')
+    .from('person')
+    .where('id', id)
+    .first()
+  const propertyResult = await knex
+    .select('hasProperty.id AS id', 'hasProperty.value AS value', 'propertyType.name AS name', 'propertyCategory.name AS category', 'propertyDataType.name AS type')
+    .from('hasProperty')
+    .join('propertyType', 'propertyType.id', 'hasProperty.propertyTypeId')
+    .join('propertyCategory', 'propertyCategory.id', 'propertyType.propertyCategoryId')
+    .join('propertyDataType', 'propertyDataType.id', 'propertyType.propertyDataTypeId')
+    .where('hasProperty.personId', id)
+  const relationResult = await knex
+    .select('*')
+    .from('relatedTo')
+    .join('person AS person1', 'person1.id', 'relatedTo.firstPersonId')
+    .join('person AS person2', 'person2.id', 'relatedTo.secondPersonId')
+    .join('relationType', 'relatedTo.relationTypeId', 'relationType.id')
+    .join('relationCategory', 'relationType.relationCategoryId', 'relationCategory.id')
+  const data = {
+    ...result,
+    properties: propertyResult,
+    relations: relationResult
+  }
+  res.json(data)
+})
+
 module.exports = people

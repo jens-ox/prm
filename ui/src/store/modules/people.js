@@ -8,7 +8,14 @@ export default {
     new: {
       firstName: '',
       lastName: '',
-      properties: []
+      properties: [],
+      relations: []
+    },
+    active: {
+      firstName: '',
+      lastName: '',
+      properties: [],
+      relations: []
     }
   },
   mutations: {
@@ -18,6 +25,9 @@ export default {
     },
     addPerson (state, person) {
       state.available.push(person)
+    },
+    setActive (state, payload) {
+      state.active = payload
     },
     setFirstName (state, firstName) { state.new.firstName = firstName },
     setLastName (state, lastName) { state.new.lastName = lastName },
@@ -47,6 +57,16 @@ export default {
         resolve()
       })
     },
+    async loadInstance ({ commit }, id) {
+      console.log('loading person: ', id)
+
+      return new Promise(async resolve => {
+        const result = await Vue.axios.get(new URL(`/people/by-id/${id}`, config.api))
+        console.log('result: ', result.data)
+        commit('setActive', result.data)
+        resolve()
+      })
+    },
     async store ({ state, commit }) {
       return new Promise(async resolve => {
         // store remove
@@ -56,14 +76,14 @@ export default {
         // store local
         commit('addPerson', {
           ...state.new,
-          id: result.body
+          id: result.data
         })
 
         // reset new
         commit('resetNew')
 
         // resolve
-        resolve(result.body)
+        resolve(result.data)
       })
     }
   }

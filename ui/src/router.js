@@ -20,6 +20,10 @@ export default new Router({
     {
       path: '/add-property',
       component: () => import(/* webpackChunkName: "add-property" */ './views/AddProperty.vue')
+    },
+    {
+      path: '/person/:id',
+      component: () => import(/* webpackChunkName: "person" */ './views/Person.vue')
     }
   ]
 })

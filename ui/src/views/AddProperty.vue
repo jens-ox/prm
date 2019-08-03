@@ -1,7 +1,6 @@
 <template>
   <div>
     <h1 class="header">Add Property</h1>
-    <small><pre>{{ $store.state.propertyTypes.new }}</pre></small>
     <div class="fields">
       <div class="field">
         <label for="property-name">Property Name</label>
