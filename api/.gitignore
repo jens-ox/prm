@@ -1,0 +1,8 @@
+# node modules
+node_modules
+
+# i hate lockfiles
+yarn.lock
+
+# database
+data.db

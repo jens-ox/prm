@@ -1,0 +1,114 @@
+@tailwind base
+@tailwind components
+@tailwind utilities
+
+@import url('https://fonts.googleapis.com/css?family=EB+Garamond:400,700&display=swap')
+
+$font-serif: 'EB Garamond', Georgia, Cambria, "Times New Roman", Times, serif
+
+html
+  @apply bg-white text-black font-sans
+
+h1, h2, h3, h4, h5
+  @apply font-bold
+
+h1, h2, h3
+  font-family: $font-serif
+
+h1
+  @apply text-5xl
+
+h3
+  @apply text-3xl
+
+.header
+  @apply border-b border-gray-200 mb-6
+
+p
+  @apply mb-2
+
+a
+  @apply text-blue-700
+
+  &:hover
+    @apply bg-blue-200
+
+button
+  @apply border border-gray-300 px-2 py-1 rounded font-bold
+  &.disabled
+    @apply cursor-default text-gray-600
+    &:hover
+      filter: brightness(100%)
+  &:hover
+    filter: brightness(90%)
+  &:focus
+    filter: brightness(80%)
+  &.primary
+    @apply border-green-500 bg-green-500 text-white
+    &.disabled
+      @apply border-green-300 bg-green-300
+  &.secondary
+    @apply border-gray-300 bg-gray-300
+  &.large
+    @apply px-4 py-2 text-lg
+
+
+.bar-buttons
+  >button
+    @apply mr-4
+    &:last-child
+      @apply mr-0
+
+ul
+  @apply list-disc mb-2
+  >li
+    @apply ml-6 pl-2
+
+.form
+  @apply max-w-5xl
+
+input
+  @apply bg-transparent border border-gray-300 px-3 py-2 m-2 rounded
+
+  &:focus
+    @apply outline-none border-blue-400
+
+.fields
+  @apply flex flex-row mb-6 mt-2 max-w-xl
+
+  >.field
+    @apply mr-4 flex-1 flex-grow
+    &:first-child
+      @apply ml-0
+    &:last-child
+      @apply mr-0
+    >input
+      @apply m-0 w-full
+
+.dropdown
+  @apply relative
+
+  >input
+    &:focus
+      @apply rounded-b-none
+.dropdown-list
+  @apply absolute w-full list-none bg-white border border-gray-300 border-t-0 text-sm
+  >li
+    @apply ml-0 px-2 py-1 border-b border-gray-300 cursor-pointer
+    &:hover
+      @apply bg-gray-100
+    &:last-child
+      @apply border-0
+    &.no-select
+      @apply cursor-default
+      &:hover
+        @apply bg-transparent
+
+.modal
+  @apply bg-white rounded fixed z-20 p-4
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+
+.backdrop
+  @apply bg-gray-800 opacity-50 z-10 fixed w-full h-full top-0 left-0 cursor-pointer

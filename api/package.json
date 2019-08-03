@@ -1,0 +1,26 @@
+{
+  "name": "prm-api",
+  "version": "0.0.1",
+  "description": "PRM API",
+  "main": "index.js",
+  "author": "Jens Ox",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "serve": "nodemon index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "knex": "^0.19.1",
+    "sqlite3": "^4.0.9"
+  },
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0"
+  }
+}
