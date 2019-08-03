@@ -6,13 +6,20 @@
     </div>
 
     <!-- content -->
-    <input type="text" placeholder="Find someone" v-model="searchPeople" class="ml-0">
-    <ul class="list-people">
+    <input
+      type="text"
+      placeholder="Find someone"
+      v-model="searchPeople"
+      class="ml-0"
+      v-if="availablePeople.length > 0"
+    >
+    <ul class="list-people" v-if="availablePeople.length > 0">
       <li
         v-for="person in filteredPeople"
         :key="person.id"
       ><router-link :to="`/person/${person.id}`">{{ person.lastName }}, {{ person.firstName }}</router-link></li>
     </ul>
+    <p v-else class="italic">No people available. <router-link to="/add-person">Add someone!</router-link></p>
   </div>
 </template>
 
