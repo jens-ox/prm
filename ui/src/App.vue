@@ -3,7 +3,6 @@
     <div id="nav" class="bg-gray-200 px-2 pt-8 w-64 flex-shrink inline-block">
       <ul class="list-nav">
         <li><router-link to="/">People</router-link></li>
-        <li><router-link to="/properties">Properties</router-link></li>
         <li><router-link to="/relations">Relations</router-link></li>
       </ul>
     </div>

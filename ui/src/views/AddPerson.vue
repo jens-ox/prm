@@ -76,10 +76,7 @@ export default {
     async storePerson (repeat = false) {
       if (!this.saveable) return
       const newPersonId = await this.$store.dispatch('people/store')
-      if (repeat) {
-        // clear all
-        this.$store.commit('person/resetNew')
-      } else {
+      if (!repeat) {
         // redirect
         this.$router.push(`/person/${newPersonId}`)
       }

@@ -14,10 +14,6 @@ export default new Router({
       component: Home
     },
     {
-      path: '/properties',
-      component: () => import(/* webpackChunkName: "properties" */ './views/Properties.vue')
-    },
-    {
       path: '/add-person',
       component: () => import(/* webpackChunkName: "add-person" */ './views/AddPerson.vue')
     },

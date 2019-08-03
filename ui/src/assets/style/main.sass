@@ -44,7 +44,7 @@ button
   &:focus
     filter: brightness(80%)
   &.primary
-    @apply border-green-500 bg-green-500 text-white
+    @apply border-green-600 bg-green-600 text-white
     &.disabled
       @apply border-green-300 bg-green-300
   &.secondary
@@ -72,6 +72,9 @@ input
 
   &:focus
     @apply outline-none border-blue-400
+
+label
+  @apply text-sm font-bold
 
 .fields
   @apply flex flex-row mb-6 mt-2 max-w-xl

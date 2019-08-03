@@ -47,10 +47,22 @@ export default {
         resolve()
       })
     },
-    async store ({ state }) {
+    async store ({ state, commit }) {
       return new Promise(async resolve => {
+        // store remove
         console.log('storing person: ', state.new)
         const result = await Vue.axios.post(new URL('/people', config.api), state.new)
+
+        // store local
+        commit('addPerson', {
+          ...state.new,
+          id: result.body
+        })
+
+        // reset new
+        commit('resetNew')
+
+        // resolve
         resolve(result.body)
       })
     }

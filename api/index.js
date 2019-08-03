@@ -23,6 +23,8 @@ app.use(function (req, res, next) {
 // routes
 app.use('/people', require('./routes/people'))
 app.use('/property-types', require('./routes/propertyTypes'))
+app.use('/property-data-types', require('./routes/propertyDataTypes'))
+app.use('/property-categories', require('./routes/propertyCategories'))
 
 // error handling
 app.use(function (err, req, res, next) {
