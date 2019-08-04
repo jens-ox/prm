@@ -70,7 +70,7 @@ export default {
         ...this.$store.state.properties.new,
         personId: undefined
       })
-      this.$store.commit('properties/reset')
+      this.$store.commit('properties/resetNew')
       this.addingProperty = false
     },
     async storePerson (repeat = false) {

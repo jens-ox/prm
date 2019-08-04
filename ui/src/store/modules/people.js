@@ -19,16 +19,15 @@ export default {
     }
   },
   mutations: {
-    // people
-    setPeople (state, peopleArray) {
-      state.available = peopleArray
-    },
-    addPerson (state, person) {
-      state.available.push(person)
-    },
-    setActive (state, payload) {
-      state.active = payload
-    },
+    // available
+    setPeople (state, peopleArray) { state.available = peopleArray },
+    addPerson (state, person) { state.available.push(person) },
+
+    // active
+    setActive (state, payload) { state.active = payload },
+    addActiveProperty (state, property) { state.active.properties.push(property) },
+
+    // new
     setFirstName (state, firstName) { state.new.firstName = firstName },
     setLastName (state, lastName) { state.new.lastName = lastName },
     addProperty (state, property) { state.new.properties.push(property) },
@@ -69,8 +68,9 @@ export default {
     },
     async store ({ state, commit }) {
       return new Promise(async resolve => {
-        // store remove
         console.log('storing person: ', state.new)
+
+        // store remote
         const result = await Vue.axios.post(new URL('/people', config.api), state.new)
 
         // store local
@@ -82,7 +82,6 @@ export default {
         // reset new
         commit('resetNew')
 
-        // resolve
         resolve(result.data)
       })
     }
