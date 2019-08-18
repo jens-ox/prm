@@ -80,13 +80,15 @@ label
   @apply flex flex-row mb-6 mt-2 max-w-xl
 
   >.field
-    @apply mr-4 flex-1 flex-grow
+    @apply mr-4 flex-1 flex-grow my-auto
     &:first-child
       @apply ml-0
     &:last-child
       @apply mr-0
     >input
       @apply m-0 w-full
+    >input[type="checkbox"]
+      @apply w-auto mr-2
 
 .dropdown
   @apply relative
@@ -95,7 +97,7 @@ label
     &:focus
       @apply rounded-b-none
 .dropdown-list
-  @apply absolute w-full list-none bg-white border border-gray-300 border-t-0 text-sm
+  @apply absolute w-full list-none bg-white border border-gray-300 border-t-0 text-sm z-10
   >li
     @apply ml-0 px-2 py-1 border-b border-gray-300 cursor-pointer
     &:hover

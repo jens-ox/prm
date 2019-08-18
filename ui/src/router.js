@@ -22,6 +22,10 @@ export default new Router({
       component: () => import(/* webpackChunkName: "add-property" */ './views/AddProperty.vue')
     },
     {
+      path: '/add-relation',
+      component: () => import(/* webpackChunkName: "add-relation" */ './views/AddRelation.vue')
+    },
+    {
       path: '/person/:id',
       component: () => import(/* webpackChunkName: "person" */ './views/Person.vue')
     }

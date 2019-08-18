@@ -22,10 +22,17 @@ app.use(function (req, res, next) {
 
 // routes
 app.use('/people', require('./routes/people'))
+
+// -- property related
 app.use('/properties', require('./routes/properties'))
 app.use('/property-types', require('./routes/propertyTypes'))
 app.use('/property-data-types', require('./routes/propertyDataTypes'))
 app.use('/property-categories', require('./routes/propertyCategories'))
+
+// -- relation related
+app.use('/relations', require('./routes/relations'))
+app.use('/relation-types', require('./routes/relationTypes'))
+app.use('/relation-categories', require('./routes/relationCategories'))
 
 // error handling
 app.use(function (err, req, res, next) {

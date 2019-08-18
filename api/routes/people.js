@@ -96,6 +96,10 @@ people.get('/by-id/:id', async (req, res, next) => {
     .from('person')
     .where('id', id)
     .first()
+
+  // check if person exists
+  if (!result) return res.status(404).send('person not found')
+
   const propertyResult = await knex
     .select('hasProperty.id AS id', 'hasProperty.value AS value', 'propertyType.name AS name', 'propertyCategory.name AS category', 'propertyDataType.name AS type')
     .from('hasProperty')
@@ -104,12 +108,25 @@ people.get('/by-id/:id', async (req, res, next) => {
     .join('propertyDataType', 'propertyDataType.id', 'propertyType.propertyDataTypeId')
     .where('hasProperty.personId', id)
   const relationResult = await knex
-    .select('*')
+    .select(
+      'person1.id AS firstPersonId',
+      'person1.firstName AS firstPersonFirstName',
+      'person1.lastName AS firstPersonLastName',
+      'person2.id AS secondPersonId',
+      'person2.firstName AS secondPersonFirstName',
+      'person2.lastName AS secondPersonLastName',
+      'relationType.name AS relationTypeName',
+      'relationType.isBidirectional AS relationTypeBidirectional',
+      'relationType.reverseName AS relationTypeReverseName',
+      'relationCategory.name AS relationCategoryName'
+    )
     .from('relatedTo')
     .join('person AS person1', 'person1.id', 'relatedTo.firstPersonId')
     .join('person AS person2', 'person2.id', 'relatedTo.secondPersonId')
     .join('relationType', 'relatedTo.relationTypeId', 'relationType.id')
     .join('relationCategory', 'relationType.relationCategoryId', 'relationCategory.id')
+    .where('person1.id', id)
+    .orWhere('person2.id', id)
   const data = {
     ...result,
     properties: propertyResult,

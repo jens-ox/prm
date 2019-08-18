@@ -18,6 +18,9 @@ export default {
       relations: []
     }
   },
+  getters: {
+    getPerson: state => id => state.available.find(person => person.id === id)
+  },
   mutations: {
     // available
     setPeople (state, peopleArray) { state.available = peopleArray },
@@ -26,6 +29,7 @@ export default {
     // active
     setActive (state, payload) { state.active = payload },
     addActiveProperty (state, property) { state.active.properties.push(property) },
+    addActiveRelation (state, relation) { state.active.relations.push(relation) },
 
     // new
     setFirstName (state, firstName) { state.new.firstName = firstName },

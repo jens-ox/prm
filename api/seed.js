@@ -30,6 +30,8 @@ module.exports = async () => {
     await knex.schema.createTable('relationType', table => {
       table.increments('id')
       table.string('name')
+      table.boolean('isBidirectional').defaultTo(true)
+      table.string('reverseName').defaultTo('')
       table.integer('relationCategoryId').references('id').inTable('relationCategory')
     })
   }
@@ -42,6 +44,7 @@ module.exports = async () => {
       table.bigIncrements('id')
       table.integer('firstPersonId').references('id').inTable('person')
       table.integer('secondPersonId').references('id').inTable('person')
+      table.string('value')
       table.integer('relationTypeId').references('id').inTable('relationType')
     })
   }

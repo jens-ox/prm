@@ -10,22 +10,55 @@
         <input type="text" placeholder="Last Name" v-model="lastName">
       </div>
     </div>
+
+    <!-- properties -->
     <h5 class="mb-2">Properties</h5>
     <div class="mb-2">
       <ul class="property-list">
         <li
           v-for="(property, i) in existingProperties"
           :key="`existing-property-${i}`"
-        ><b>{{ $store.getters['propertyTypes/getProperty'](property.propertyTypeId).name }}:</b> {{ property.value }}</li>
+        >
+          <b>{{ getProperty(property.propertyTypeId).name }}:</b> {{ property.value }}
+        </li>
       </ul>
     </div>
-    <button class="secondary" v-if="!addingProperty" @click="addingProperty = true">
-      <font-awesome-icon icon="plus" class="mr-2" /> Add Property
-    </button>
-    <add-property
-      v-if="addingProperty"
-      @add="addProperty"
-    />
+
+    <!-- add property -->
+    <div class="mb-8">
+      <button class="secondary" v-if="!addingProperty" @click="addingProperty = true">
+        <font-awesome-icon icon="plus" class="mr-2" /> Add Property
+      </button>
+      <add-property
+        v-if="addingProperty"
+        @add="addProperty"
+      />
+    </div>
+
+    <h5 class="mb-2">Relations</h5>
+    <div class="m">
+      <ul class="relations-list">
+        <li
+          v-for="(relation, i) in existingRelations"
+          :key="`existing-relation-${i}`"
+        >
+          <b>{{ getRelation(relation.relationTypeId).name }}:</b> {{ getPerson(relation.otherPersonId).lastName }}, {{ getPerson(relation.otherPersonId).firstName }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- add relation -->
+    <div class="mb-8">
+      <button class="secondary" v-if="!addingRelation" @click="addingRelation = true">
+        <font-awesome-icon icon="arrows-alt-h" class="mr-2" /> Add Relation
+      </button>
+      <add-relation
+        v-if="addingRelation"
+        @add="addRelation"
+      />
+    </div>
+
+    <!-- save -->
     <div class="bar-buttons mt-8">
       <button
         class="primary large"
@@ -41,17 +74,25 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import AddProperty from '@/components/AddProperty.vue'
+import AddRelation from '@/components/AddRelation.vue'
 
 export default {
-  components: { AddProperty },
+  components: { AddProperty, AddRelation },
   data: () => ({
-    addingProperty: false
+    addingProperty: false,
+    addingRelation: false
   }),
   computed: {
     ...mapState('people', {
-      existingProperties: state => state.new.properties
+      existingProperties: state => state.new.properties,
+      existingRelations: state => state.new.relations
+    }),
+    ...mapGetters({
+      getProperty: 'propertyTypes/getProperty',
+      getRelation: 'relationTypes/getRelation',
+      getPerson: 'people/getPerson'
     }),
     firstName: {
       get () { return this.$store.state.people.new.firstName },
@@ -72,6 +113,12 @@ export default {
       })
       this.$store.commit('properties/resetNew')
       this.addingProperty = false
+    },
+    addRelation () {
+      this.$store.commit('people/addRelation', {
+        ...this.$store.state.relations.new,
+        personId: undefined
+      })
     },
     async storePerson (repeat = false) {
       if (!this.saveable) return

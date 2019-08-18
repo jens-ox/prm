@@ -9,10 +9,6 @@ export default {
       name: '',
       propertyDataTypeId: 0,
       propertyCategoryId: 0
-    },
-    newInstance: {
-      id: 0,
-      value: ''
     }
   },
   mutations: {
