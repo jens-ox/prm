@@ -143,7 +143,14 @@ export default {
     async storeRelation () {
       if (!this.saveable) return
       await this.$store.dispatch('relationTypes/store')
-      this.$router.push('/add-person')
+
+      // return to active if possible
+      const id = this.$store.state.people.active.id
+      if (id !== 0) {
+        this.$router.push(`/person/${id}`)
+      } else {
+        this.$router.push('/add-person')
+      }
     }
   }
 }

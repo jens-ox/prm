@@ -52,7 +52,6 @@ notes.delete('/:id', async (req, res, next) => {
   const id = req.params.id
   if (!id) return next(new Error('no id set'))
 
-  // delete note
   const result = await knex('note').where('id', id).del()
 
   res.json(result)

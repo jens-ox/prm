@@ -43,8 +43,7 @@ export default {
     async store ({ state, commit }) {
       return new Promise(async resolve => {
         // store remove
-        console.log('storing property type: ', state.new)
-        const result = await Vue.axios.post(new URL('/property-types', config.api), state.new)
+        const result = await Vue.axios.post(new URL('/property-types', config.api), { ...state.new })
 
         // store local
         commit('addPropertyType', {

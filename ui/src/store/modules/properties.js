@@ -41,6 +41,16 @@ export default {
 
         resolve(result.data)
       })
+    },
+    async remove ({ commit }, id) {
+      return new Promise(async resolve => {
+        const result = await Vue.axios.delete(new URL(`properties/${id}`, config.api))
+
+        // remove local
+        commit('people/removeActiveProperty', id, { root: true })
+
+        resolve(result.data)
+      })
     }
   }
 }

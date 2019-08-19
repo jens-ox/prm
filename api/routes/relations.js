@@ -26,4 +26,16 @@ relations.post('/', async (req, res, next) => {
   res.json(relatedToId)
 })
 
+/**
+ * DELETE /:id: delete relation with id
+ */
+relations.delete('/:id', async (req, res, next) => {
+  const id = req.params.id
+  if (!id) return next(new Error('no id set'))
+
+  const result = await knex('relatedTo').where('id', id).del()
+
+  res.json(result)
+})
+
 module.exports = relations

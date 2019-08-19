@@ -25,4 +25,16 @@ properties.post('/', async (req, res, next) => {
   res.json(hasPropertyId)
 })
 
+/**
+ * DELETE /:id: delete property with id
+ */
+properties.delete('/:id', async (req, res, next) => {
+  const id = req.params.id
+  if (!id) return next(new Error('no id set'))
+
+  const result = await knex('hasProperty').where('id', id).del()
+
+  res.json(result)
+})
+
 module.exports = properties

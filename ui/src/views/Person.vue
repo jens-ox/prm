@@ -26,12 +26,13 @@
 
     <!-- properties -->
     <h5>Properties</h5>
-    <ul class="property-list" v-if="person.properties.length > 0">
-      <li
+    <div v-if="person.properties.length > 0" class="flex flex-col max-w-xl mt-2">
+      <property
         v-for="property in person.properties"
         :key="`property-${property.id}`"
-      ><b>{{ property.name }}:</b> {{ property.value }}</li>
-    </ul>
+        :property="property"
+      />
+    </div>
     <p class="text-sm italic" v-else>no properties, yet.</p>
 
     <!-- relations -->
@@ -65,9 +66,10 @@ import AddRelation from '@/components/AddRelation.vue'
 import AddNote from '@/components/AddNote.vue'
 import Note from '@/components/Note.vue'
 import Relation from '@/components/Relation.vue'
+import Property from '@/components/Property.vue'
 
 export default {
-  components: { AddProperty, AddRelation, AddNote, Note, Relation },
+  components: { AddProperty, AddRelation, AddNote, Note, Relation, Property },
   data: () => ({
     addingProperty: false,
     addingRelation: false,

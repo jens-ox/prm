@@ -166,6 +166,17 @@ module.exports = async () => {
     phoneId = pdtPhone[0].id
   }
 
+  // link property data type
+  const pdtLink = await knex.select('id').from('propertyDataType').where('name', 'link')
+  let linkId
+  if (pdtLink.length === 0) {
+    console.log('pdt: creating link')
+    const res = await knex('propertyDataType').insert({ name: 'link' })
+    linkId = res[0]
+  } else {
+    linkId = pdtLink[0].id
+  }
+
   // general property category
   const pcGeneral = await knex.select('id').from('propertyCategory').where('name', 'General')
   let generalId

@@ -157,7 +157,7 @@ export default {
       this.$store.commit('propertyTypes/setNewCategory', category.id)
 
       // close search
-      this.searchingPropertyDataType = false
+      this.searchingPropertyCategory = false
 
       // for the user: fix text
       this.searchPropertyCategory = category.name
@@ -165,7 +165,14 @@ export default {
     async storeProperty () {
       if (!this.saveable) return
       await this.$store.dispatch('propertyTypes/store')
-      this.$router.push('/add-person')
+
+      // return to active if possible
+      const id = this.$store.state.people.active.id
+      if (id !== 0) {
+        this.$router.push(`/person/${id}`)
+      } else {
+        this.$router.push('/add-person')
+      }
     }
   }
 }

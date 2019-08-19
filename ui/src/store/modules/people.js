@@ -34,6 +34,9 @@ export default {
     addActiveProperty (state, property) { state.active.properties.push(property) },
     addActiveRelation (state, relation) { state.active.relations.push(relation) },
     addActiveNote (state, note) { state.active.notes.push(note) },
+
+    removeActiveProperty (state, id) { state.active.properties = state.active.properties.filter(property => property.id !== id) },
+    removeActiveRelation (state, id) { state.active.relations = state.active.relations.filter(relation => relation.id !== id) },
     removeActiveNote (state, id) { state.active.notes = state.active.notes.filter(note => note.id !== id) },
 
     // new

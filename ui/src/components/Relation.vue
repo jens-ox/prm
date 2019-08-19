@@ -1,5 +1,10 @@
 <template>
   <div class="mb-4 px-4 py-2 rounded border-gray-300 border bg-white relative">
+
+    <!-- delete button -->
+    <button @click="remove" class="icon absolute top-0 right-0 mr-2 mt-1 text-sm text-gray-500"><font-awesome-icon icon="trash-alt" /></button>
+
+    <!-- content -->
     <router-link :to="`/person/${relatedPerson.id}`">{{ relatedPerson.lastName }}, {{ relatedPerson.firstName }}</router-link>: {{ relationName }} <br>
     <p class="text-sm mb-0 italic" v-if="relation.relationValue !== ''">
       {{ relation.relationValue }}
@@ -19,9 +24,6 @@ export default {
       return parseInt(this.$route.params.id || this.$store.state.people.active.id)
     },
     relatedPerson () {
-      console.log('active: ', this.activePersonId)
-      console.log('first: ', this.relation.firstPersonId)
-      console.log('second: ', this.relation.secondPersonId)
       if (this.activePersonId === this.relation.firstPersonId) {
         return {
           firstName: this.relation.secondPersonFirstName,
@@ -46,6 +48,12 @@ export default {
       } else {
         return this.relation.relationTypeReverseName
       }
+    }
+  },
+  methods: {
+    async remove () {
+      console.log('removing relation: ', this.relation)
+      await this.$store.dispatch('relatedTo/remove', this.relation.id)
     }
   }
 }
