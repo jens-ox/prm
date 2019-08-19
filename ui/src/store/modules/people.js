@@ -33,6 +33,7 @@ export default {
     addActiveProperty (state, property) { state.active.properties.push(property) },
     addActiveRelation (state, relation) { state.active.relations.push(relation) },
     addActiveNote (state, note) { state.active.notes.push(note) },
+    removeActiveNote (state, id) { state.active.notes = state.active.notes.filter(note => note.id !== id) },
 
     // new
     setFirstName (state, firstName) { state.new.firstName = firstName },

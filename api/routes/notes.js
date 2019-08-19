@@ -45,4 +45,17 @@ notes.post('/', async (req, res, next) => {
   res.json(noteId)
 })
 
+/**
+ * DELETE /:id: delete note with id
+ */
+notes.delete('/:id', async (req, res, next) => {
+  const id = req.params.id
+  if (!id) return next(new Error('no id set'))
+
+  // delete note
+  const result = await knex('note').where('id', id).del()
+
+  res.json(result)
+})
+
 module.exports = notes

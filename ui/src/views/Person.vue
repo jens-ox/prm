@@ -48,12 +48,13 @@
 
     <!-- notes -->
     <h5>Notes</h5>
-    <ul class="notes-list" v-if="person.notes.length > 0">
-      <li
+    <div v-if="person.notes.length > 0" class="flex flex-col max-w-xl mt-2">
+      <note
         v-for="note in person.notes"
         :key="`note-${note.id}`"
-      >{{ note }}</li>
-    </ul>
+        :note="note"
+      />
+    </div>
     <p class="text-sm italic" v-else>no notes, yet.</p>
   </div>
 </template>
@@ -63,9 +64,10 @@ import { mapState, mapGetters } from 'vuex'
 import AddProperty from '@/components/AddProperty.vue'
 import AddRelation from '@/components/AddRelation.vue'
 import AddNote from '@/components/AddNote.vue'
+import Note from '@/components/Note.vue'
 
 export default {
-  components: { AddProperty, AddRelation, AddNote },
+  components: { AddProperty, AddRelation, AddNote, Note },
   data: () => ({
     addingProperty: false,
     addingRelation: false,
