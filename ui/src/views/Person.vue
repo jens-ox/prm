@@ -4,8 +4,9 @@
 
     <!-- actions -->
     <div class="actions mb-8">
-      <button @click="addingProperty = true"><font-awesome-icon icon="plus" /> Add Property</button>
-      <button @click="addingRelation = true"><font-awesome-icon icon="arrows-alt-h" /> Add Relation</button>
+      <button @click="addingProperty = true; addingRelation = false; addingNote = false"><font-awesome-icon icon="plus" /> Add Property</button>
+      <button @click="addingRelation = true; addingProperty = false; addingNote = false"><font-awesome-icon icon="arrows-alt-h" /> Add Relation</button>
+      <button @click="addingNote = true; addingProperty = false; addingRelation = false"><font-awesome-icon icon="align-justify" /> Add Note</button>
     </div>
 
     <!-- add property -->
@@ -16,6 +17,11 @@
     <!-- add relation -->
     <div v-if="addingRelation">
       <add-relation @add="addRelation" />
+    </div>
+
+    <!-- add note -->
+    <div v-if="addingNote">
+      <add-note @add="addNote" />
     </div>
 
     <!-- properties -->
@@ -35,9 +41,20 @@
         v-for="relation in person.relations"
         :key="`relation-${relation.id}`"
       >
-        <b>{{ getPerson(relation.secondPersonId).lastName }}, {{ getPerson(relation.secondPersonId).firstName }}</b>: {{ relation.name }} ({{ relation.value }})
+        <small><pre>{{ relation }}</pre></small>
       </li>
     </ul>
+    <p class="text-sm italic" v-else>no relations, yet.</p>
+
+    <!-- notes -->
+    <h5>Notes</h5>
+    <ul class="notes-list" v-if="person.notes.length > 0">
+      <li
+        v-for="note in person.notes"
+        :key="`note-${note.id}`"
+      >{{ note }}</li>
+    </ul>
+    <p class="text-sm italic" v-else>no notes, yet.</p>
   </div>
 </template>
 <script>
@@ -45,12 +62,14 @@ import { mapState, mapGetters } from 'vuex'
 
 import AddProperty from '@/components/AddProperty.vue'
 import AddRelation from '@/components/AddRelation.vue'
+import AddNote from '@/components/AddNote.vue'
 
 export default {
-  components: { AddProperty, AddRelation },
+  components: { AddProperty, AddRelation, AddNote },
   data: () => ({
     addingProperty: false,
-    addingRelation: false
+    addingRelation: false,
+    addingNote: false
   }),
   async beforeMount () {
     try {
@@ -85,6 +104,15 @@ export default {
       await this.$store.dispatch('relatedTo/store')
 
       this.addingRelation = false
+    },
+    async addNote () {
+      // set person of new note
+      this.$store.commit('note/setPerson', this.$route.params.id)
+
+      // store note
+      await this.$store.dispatch('note/store')
+
+      this.addingNote = false
     }
   }
 }

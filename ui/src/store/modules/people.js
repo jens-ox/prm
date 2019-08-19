@@ -9,13 +9,15 @@ export default {
       firstName: '',
       lastName: '',
       properties: [],
-      relations: []
+      relations: [],
+      notes: []
     },
     active: {
       firstName: '',
       lastName: '',
       properties: [],
-      relations: []
+      relations: [],
+      notes: []
     }
   },
   getters: {
@@ -30,6 +32,7 @@ export default {
     setActive (state, payload) { state.active = payload },
     addActiveProperty (state, property) { state.active.properties.push(property) },
     addActiveRelation (state, relation) { state.active.relations.push(relation) },
+    addActiveNote (state, note) { state.active.notes.push(note) },
 
     // new
     setFirstName (state, firstName) { state.new.firstName = firstName },
@@ -45,6 +48,8 @@ export default {
       state.new.firstName = ''
       state.new.lastName = ''
       state.new.properties = []
+      state.new.relations = []
+      state.new.notes = []
     }
   },
   actions: {

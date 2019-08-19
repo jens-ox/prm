@@ -31,7 +31,7 @@ people.get('/', async (req, res, next) => {
  */
 people.post('/', async (req, res, next) => {
   console.log(req.body)
-  const { relations = [], properties = [], ...person } = req.body
+  const { relations = [], properties = [], notes = [], ...person } = req.body
   console.log('adding person: ', { person, relations, properties })
 
   // check that base parameters are set
@@ -57,6 +57,14 @@ people.post('/', async (req, res, next) => {
       personId,
       value: property.value,
       propertyTypeId: property.propertyTypeId
+    })))
+  }
+
+  // create notes if necessary
+  if (notes.length > 0) {
+    await knex('note').insert(notes.map(note => ({
+      personId,
+      ...note
     })))
   }
 
@@ -127,10 +135,15 @@ people.get('/by-id/:id', async (req, res, next) => {
     .join('relationCategory', 'relationType.relationCategoryId', 'relationCategory.id')
     .where('person1.id', id)
     .orWhere('person2.id', id)
+  const notesResult = await knex
+    .select('*')
+    .from('note')
+    .where('personId', id)
   const data = {
     ...result,
     properties: propertyResult,
-    relations: relationResult
+    relations: relationResult,
+    notes: notesResult
   }
   res.json(data)
 })

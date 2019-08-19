@@ -2,6 +2,7 @@ const knex = require('./knex')
 
 module.exports = async () => {
   console.log('creating all database tables')
+
   // person
   const hasPerson = await knex.schema.hasTable('person')
   if (!hasPerson) {
@@ -10,6 +11,18 @@ module.exports = async () => {
       table.increments('id')
       table.string('firstName')
       table.string('lastName')
+    })
+  }
+
+  // note
+  const hasNote = await knex.schema.hasTable('note')
+  if (!hasNote) {
+    console.log('creating table note')
+    await knex.schema.createTable('note', table => {
+      table.increments('id')
+      table.text('text')
+      table.bigInteger('timestamp')
+      table.integer('personId').references('id').inTable('person')
     })
   }
 
