@@ -36,14 +36,13 @@
 
     <!-- relations -->
     <h5>Relations</h5>
-    <ul class="relations-list" v-if="person.relations.length > 0">
-      <li
+    <div v-if="person.relations.length > 0" class="flex flex-col max-w-xl mt-2">
+      <relation
         v-for="relation in person.relations"
         :key="`relation-${relation.id}`"
-      >
-        <small><pre>{{ relation }}</pre></small>
-      </li>
-    </ul>
+        :relation="relation"
+      />
+    </div>
     <p class="text-sm italic" v-else>no relations, yet.</p>
 
     <!-- notes -->
@@ -65,19 +64,21 @@ import AddProperty from '@/components/AddProperty.vue'
 import AddRelation from '@/components/AddRelation.vue'
 import AddNote from '@/components/AddNote.vue'
 import Note from '@/components/Note.vue'
+import Relation from '@/components/Relation.vue'
 
 export default {
-  components: { AddProperty, AddRelation, AddNote, Note },
+  components: { AddProperty, AddRelation, AddNote, Note, Relation },
   data: () => ({
     addingProperty: false,
     addingRelation: false,
     addingNote: false
   }),
-  async beforeMount () {
-    try {
-      await this.$store.dispatch('people/loadInstance', this.$route.params.id)
-    } catch (error) {
-      console.error('error: ', error.status)
+  beforeMount () {
+    this.loadPerson()
+  },
+  watch: {
+    $route (to, from) {
+      this.loadPerson()
     }
   },
   computed: {
@@ -89,6 +90,9 @@ export default {
     })
   },
   methods: {
+    async loadPerson () {
+      await this.$store.dispatch('people/loadInstance', this.$route.params.id)
+    },
     async addProperty () {
       // set person of new property
       this.$store.commit('properties/setPerson', this.$route.params.id)

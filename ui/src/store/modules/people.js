@@ -13,6 +13,7 @@ export default {
       notes: []
     },
     active: {
+      id: 0,
       firstName: '',
       lastName: '',
       properties: [],
@@ -72,7 +73,10 @@ export default {
       return new Promise(async resolve => {
         const result = await Vue.axios.get(new URL(`/people/by-id/${id}`, config.api))
         console.log('result: ', result.data)
-        commit('setActive', result.data)
+        commit('setActive', {
+          ...result.data,
+          id
+        })
         resolve()
       })
     },

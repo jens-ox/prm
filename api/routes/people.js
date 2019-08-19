@@ -126,7 +126,8 @@ people.get('/by-id/:id', async (req, res, next) => {
       'relationType.name AS relationTypeName',
       'relationType.isBidirectional AS relationTypeBidirectional',
       'relationType.reverseName AS relationTypeReverseName',
-      'relationCategory.name AS relationCategoryName'
+      'relationCategory.name AS relationCategoryName',
+      'relatedTo.value AS relationValue'
     )
     .from('relatedTo')
     .join('person AS person1', 'person1.id', 'relatedTo.firstPersonId')
