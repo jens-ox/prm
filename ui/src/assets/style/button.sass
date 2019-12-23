@@ -1,0 +1,18 @@
+button, .button
+  @apply rounded px-2 py-1 text-sm
+  background-color: rgba(255,255,255,0.1)
+  transition: background-color .1s ease-in-out
+  &:hover
+    background-color: rgba(255,255,255,0.2)
+  &.large
+    @apply text-base
+  &.primary
+    background-color: transparentize($color-primary, 0.25)
+    &:hover
+      background-color: $color-primary
+
+.bar-buttons
+  >button
+    @apply mr-4
+    &:last-child
+      @apply mr-0

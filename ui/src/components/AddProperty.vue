@@ -1,27 +1,41 @@
 <template>
   <div class="fields">
-    <div class="field dropdown" v-on-clickaway="blurSearchPropertyType">
+    <div
+      v-on-clickaway="blurSearchPropertyType"
+      class="field dropdown"
+    >
       <input
+        v-model="searchPropertyType"
         type="text"
         placeholder="Property"
-        v-model="searchPropertyType"
         @focus="searchingPropertyType = true"
       >
-      <ul class="dropdown-list" v-if="searchingPropertyType">
+      <ul
+        v-if="searchingPropertyType"
+        class="dropdown-list"
+      >
         <!-- available property types -->
         <li
           v-for="type in filteredPropertyTypes"
           :key="`propertyType-${type.id}`"
           @click="setPropertyType(type)"
-        >{{ type.name }} <span class="ml-4 text-xs text-gray-500 italic">{{ type.categoryName }}</span></li>
+        >
+          {{ type.name }} <span class="ml-4 text-xs text-gray-500 italic">{{ type.categoryName }}</span>
+        </li>
 
         <!-- note: no property types exist -->
-        <li v-if="noPropertyYet" class="no-select">
+        <li
+          v-if="noPropertyYet"
+          class="no-select"
+        >
           <span class="italic text-gray-500">no property type available, yet.</span>
         </li>
 
         <!-- note: create property type -->
-        <li v-if="!propertyExists" @click="createNewPropertyType">
+        <li
+          v-if="!propertyExists"
+          @click="createNewPropertyType"
+        >
           Create property "{{ searchPropertyType }}"
         </li>
       </ul>
@@ -29,16 +43,19 @@
     <div class="field flex">
       <input
         v-if="selectedPropertyType.dataType === 'date'"
-        type="date"
         v-model="propertyValue"
+        type="date"
       >
       <input
         v-else
+        v-model="propertyValue"
         type="text"
         placeholder="Value"
-        v-model="propertyValue"
       >
-      <button class="primary ml-4" @click="save">
+      <button
+        class="primary ml-4 px-4"
+        @click="save"
+      >
         <font-awesome-icon icon="save" />
       </button>
     </div>

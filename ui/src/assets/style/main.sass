@@ -2,125 +2,86 @@
 @tailwind components
 @tailwind utilities
 
-@import url('https://fonts.googleapis.com/css?family=EB+Garamond:400,700&display=swap')
+@import 'variables'
+@import 'font'
+@import 'table'
+@import 'form'
+@import 'button'
+@import 'card'
 
-$font-serif: 'EB Garamond', Georgia, Cambria, "Times New Roman", Times, serif
+body
+  @apply leading-relaxed text-gray-100 bg-gray-700
+  font-family: $font-sans
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  font-size: 18px
+  font-style: normal
+  font-weight: 400
 
-html
-  @apply bg-white text-black font-sans
+ul, ol
+  @apply pl-4
+  text-indent: 1rem
 
-h1, h2, h3, h4, h5
-  @apply font-bold
+.has-underline
+  background: $underline-gradient
+  background-position: 0 100%
+  background-repeat: repeat-x
+  background-size: 2px 2px
+  transition: background-size .2s
 
-h1, h2, h3
+a:not(.link-nav)
+  @apply font-semibold has-underline
+  &:hover
+    background-size: 4px 50px
+
+strong
+  @apply font-semibold text-indigo-400
+
+code
+  @apply font-mono font-light text-gray-500 text-sm
+
+h1, h2, h3, h4, h5, .title
   font-family: $font-serif
+  font-weight: 400
+  &.header
+    @apply inline-block pb-2 mb-2 pr-4 border-b border-gray-600
 
 h1
   @apply text-5xl
 
+h2
+  @apply text-4xl
+
 h3
   @apply text-3xl
 
-.header
-  @apply border-b border-gray-200 mb-6
+h4
+  @apply text-2xl
 
-p
-  @apply mb-2
+h5
+  @apply text-xl
 
-a
-  @apply text-blue-700
+header
+  @apply flex flex-row items-center mb-4
+  >.line
+    @apply flex-grow border-t border-gray-500 mx-4
+    height: 0
+  >.content
+    @apply px-4 pb-4 border-b border-gray-600
+    >.sub
+      @apply italic text-gray-500 text-sm
 
-  &:hover
-    @apply bg-blue-200
+section
+  @apply mb-6
+  >p
+    @apply text-justify
 
-button
-  @apply border border-gray-300 px-2 py-1 rounded font-bold
-  &.disabled
-    @apply cursor-default text-gray-600
-    &:hover
-      filter: brightness(100%)
-  &:hover
-    filter: brightness(90%)
-  &:focus
-    filter: brightness(80%)
-  &.primary
-    @apply border-green-600 bg-green-600 text-white
-    &.disabled
-      @apply border-green-300 bg-green-300
-  &.secondary
-    @apply border-gray-300 bg-gray-300
-  &.large
-    @apply px-4 py-2 text-lg
-  &.icon
-    @apply border-none
+section.summary
+  @apply text-lg font-bold
 
+ol
+  @apply list-decimal
 
-.bar-buttons
-  >button
-    @apply mr-4
-    &:last-child
-      @apply mr-0
-
-ul
-  @apply list-disc mb-2
-  >li
-    @apply ml-6 pl-2
-
-.form
-  @apply max-w-5xl
-
-input, textarea
-  @apply bg-transparent border border-gray-300 px-3 py-2 m-2 rounded
-
-  &:focus
-    @apply outline-none border-blue-400
-
-label
-  @apply text-sm font-bold
-
-.fields
-  @apply flex flex-row mb-6 mt-2 max-w-xl
-
-  >.field
-    @apply mr-4 flex-1 flex-grow my-auto
-    &:first-child
-      @apply ml-0
-    &:last-child
-      @apply mr-0
-    >input
-      @apply m-0 w-full
-    >input[type="checkbox"]
-      @apply w-auto mr-2
-
-.dropdown
-  @apply relative
-
-  >input
-    &:focus
-      @apply rounded-b-none
-.dropdown-list
-  @apply absolute w-full list-none bg-white border border-gray-300 border-t-0 text-sm z-10
-  >li
-    @apply ml-0 px-2 py-1 border-b border-gray-300 cursor-pointer
-    &:hover
-      @apply bg-gray-100
-    &:last-child
-      @apply border-0
-    &.no-select
-      @apply cursor-default
-      &:hover
-        @apply bg-transparent
-
-.modal
-  @apply bg-white rounded fixed z-20 p-4
-  top: 50%
-  left: 50%
-  transform: translate(-50%, -50%)
-
-.backdrop
-  @apply bg-gray-800 opacity-50 z-10 fixed w-full h-full top-0 left-0 cursor-pointer
-
-.actions
-  @apply text-sm
-  >*
-    @apply rounded-full mr-4
+.link-nav
+  &.router-link-exact-active
+    @apply font-semibold

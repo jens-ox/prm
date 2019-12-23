@@ -29,7 +29,8 @@ export default {
         const result = await Vue.axios.post(new URL('/notes', config.api), state.new)
 
         // store local
-        const payload = { ...state.new, name, noteId: result.data }
+        const timestamp = state.new.timestamp || Date.now()
+        const payload = { ...state.new, timestamp, name, noteId: result.data }
         console.log('storing local note: ', payload)
         commit('people/addActiveNote', payload, { root: true })
 

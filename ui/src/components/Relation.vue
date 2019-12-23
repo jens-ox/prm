@@ -1,12 +1,21 @@
 <template>
-  <div class="mb-4 px-4 py-2 rounded border-gray-300 border bg-white relative">
-
+  <div class="mb-4 px-4 py-2 rounded border-gray-300 border relative">
     <!-- delete button -->
-    <button @click="remove" class="icon absolute top-0 right-0 mr-2 mt-1 text-sm text-gray-500"><font-awesome-icon icon="trash-alt" /></button>
+    <button
+      class="icon absolute top-0 right-0 mr-2 mt-1 text-sm bg-transparent"
+      @click="remove"
+    >
+      <font-awesome-icon icon="trash-alt" />
+    </button>
 
     <!-- content -->
-    <router-link :to="`/person/${relatedPerson.id}`">{{ relatedPerson.lastName }}, {{ relatedPerson.firstName }}</router-link>: {{ relationName }} <br>
-    <p class="text-sm mb-0 italic" v-if="relation.relationValue !== ''">
+    <router-link :to="`/person/${relatedPerson.id}`">
+      {{ relatedPerson.lastName }}, {{ relatedPerson.firstName }}
+    </router-link>: {{ relationName }} <br>
+    <p
+      v-if="relation.relationValue !== ''"
+      class="text-sm mb-0 italic"
+    >
       {{ relation.relationValue }}
     </p>
   </div>

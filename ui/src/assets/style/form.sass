@@ -1,0 +1,35 @@
+input, textarea
+  @apply border border-gray-500 rounded p-2 bg-transparent outline-none
+  &:focus
+    @apply border-white
+
+.fields
+  @apply flex flex-row mb-6 mt-2 max-w-xl
+
+  >.field
+    @apply mr-4 flex-1 flex-grow my-auto
+    &:first-child
+      @apply ml-0
+    &:last-child
+      @apply mr-0
+    >input
+      @apply m-0 w-full
+    >input[type="checkbox"]
+      @apply w-auto mr-2
+
+.dropdown
+  @apply relative
+
+  >input
+    &:focus
+      @apply rounded-b-none
+.dropdown-list
+  @apply absolute w-full m-0 p-0 list-none bg-gray-700 border border-gray-300 border-t-0 text-sm z-10
+  >li
+    @apply px-2 py-1 border-b border-gray-300 cursor-pointer
+    &:hover
+      @apply bg-gray-600
+    &:last-child
+      @apply border-0
+    &.no-select
+      @apply cursor-default

@@ -1,25 +1,42 @@
 <template>
   <div class="home">
-    <div class="header">
-      <h1 class="mr-8">People</h1>
-      <button @click="$router.push('/add-person')"><font-awesome-icon icon="plus" /></button>
-    </div>
+    <header class="max-w-xl">
+      <h1>People</h1>
+      <div class="line" />
+      <input
+        v-if="availablePeople.length > 0"
+        v-model="searchPeople"
+        type="text"
+        placeholder="Find someone"
+        class="text-sm mr-2 py-1"
+      >
+      <button @click="$router.push('/add-person')">
+        <font-awesome-icon icon="plus" />
+      </button>
+    </header>
 
     <!-- content -->
-    <input
-      type="text"
-      placeholder="Find someone"
-      v-model="searchPeople"
-      class="ml-0"
+    <ul
       v-if="availablePeople.length > 0"
+      class="list-people"
     >
-    <ul class="list-people" v-if="availablePeople.length > 0">
       <li
         v-for="person in filteredPeople"
         :key="person.id"
-      ><router-link :to="`/person/${person.id}`">{{ person.lastName }}, {{ person.firstName }}</router-link></li>
+      >
+        <router-link :to="`/person/${person.id}`">
+          {{ person.lastName }}, {{ person.firstName }}
+        </router-link>
+      </li>
     </ul>
-    <p v-else class="italic">No people available. <router-link to="/add-person">Add someone!</router-link></p>
+    <p
+      v-else
+      class="italic"
+    >
+      No people available. <router-link to="/add-person">
+        Add someone!
+      </router-link>
+    </p>
   </div>
 </template>
 
@@ -28,7 +45,7 @@ import { mapState } from 'vuex'
 import Fuse from 'fuse.js'
 
 export default {
-  name: 'home',
+  name: 'Home',
   data: () => ({
     searchPeople: '',
     peopleSearch: {

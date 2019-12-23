@@ -1,61 +1,107 @@
 <template>
   <div>
-    <h1 class="header">{{ person.lastName }}, {{ person.firstName }}</h1>
-
-    <!-- actions -->
-    <div class="actions mb-8">
-      <button @click="addingProperty = true; addingRelation = false; addingNote = false"><font-awesome-icon icon="plus" /> Add Property</button>
-      <button @click="addingRelation = true; addingProperty = false; addingNote = false"><font-awesome-icon icon="arrows-alt-h" /> Add Relation</button>
-      <button @click="addingNote = true; addingProperty = false; addingRelation = false"><font-awesome-icon icon="align-justify" /> Add Note</button>
-    </div>
-
-    <!-- add property -->
-    <div v-if="addingProperty">
-      <add-property @add="addProperty" />
-    </div>
-
-    <!-- add relation -->
-    <div v-if="addingRelation">
-      <add-relation @add="addRelation" />
-    </div>
-
-    <!-- add note -->
-    <div v-if="addingNote">
-      <add-note @add="addNote" />
-    </div>
+    <h1 class="mb-8">
+      {{ person.lastName }}, {{ person.firstName }}
+    </h1>
 
     <!-- properties -->
-    <h5>Properties</h5>
-    <div v-if="person.properties.length > 0" class="flex flex-col max-w-xl mt-2">
-      <property
-        v-for="property in person.properties"
-        :key="`property-${property.id}`"
-        :property="property"
-      />
-    </div>
-    <p class="text-sm italic" v-else>no properties, yet.</p>
+    <header class="max-w-xl">
+      <h3>Properties</h3>
+      <div class="line" />
+      <button @click="addingProperty = !addingProperty">
+        <font-awesome-icon :icon="!addingProperty ? 'plus' : 'times'" />
+      </button>
+    </header>
+    <section>
+      <div
+        v-if="addingProperty"
+        class="max-w-xl"
+      >
+        <add-property @add="addProperty" />
+      </div>
+      <div
+        v-if="person.properties.length > 0"
+        class="flex flex-col max-w-xl mt-2"
+      >
+        <property
+          v-for="property in person.properties"
+          :key="`property-${property.id}`"
+          :property="property"
+        />
+      </div>
+      <p
+        v-else
+        class="text-sm italic"
+      >
+        no properties, yet.
+      </p>
+    </section>
 
     <!-- relations -->
-    <h5>Relations</h5>
-    <div v-if="person.relations.length > 0" class="flex flex-col max-w-xl mt-2">
-      <relation
-        v-for="relation in person.relations"
-        :key="`relation-${relation.id}`"
-        :relation="relation"
-      />
-    </div>
-    <p class="text-sm italic" v-else>no relations, yet.</p>
+    <header class="max-w-xl">
+      <h3>Relations</h3>
+      <div class="line" />
+      <button @click="addingRelation = !addingRelation">
+        <font-awesome-icon :icon="!addingRelation ? 'plus' : 'times'" />
+      </button>
+    </header>
+    <section>
+      <div
+        v-if="addingRelation"
+        class="max-w-xl"
+      >
+        <add-relation @add="addRelation" />
+      </div>
+      <div
+        v-if="person.relations.length > 0"
+        class="flex flex-col max-w-xl mt-2"
+      >
+        <relation
+          v-for="relation in person.relations"
+          :key="`relation-${relation.id}`"
+          :relation="relation"
+        />
+      </div>
+      <p
+        v-else
+        class="text-sm italic"
+      >
+        no relations, yet.
+      </p>
+    </section>
 
     <!-- notes -->
-    <h5>Notes</h5>
-    <div v-if="person.notes.length > 0" class="flex flex-col max-w-xl mt-2">
-      <note
-        v-for="note in person.notes"
-        :key="`note-${note.id}`"
-        :note="note"
-      />
-    </div>
-    <p class="text-sm italic" v-else>no notes, yet.</p>
+    <header class="max-w-xl">
+      <h3>Notes</h3>
+      <div class="line" />
+      <button @click="addingNote = !addingNote">
+        <font-awesome-icon :icon="!addingNote ? 'plus' : 'times'" />
+      </button>
+    </header>
+    <section>
+      <div
+        v-if="addingNote"
+        class="max-w-xl"
+      >
+        <add-note @add="addNote" />
+      </div>
+      <div
+        v-if="person.notes.length > 0"
+        class="flex flex-col max-w-xl mt-2"
+      >
+        <note
+          v-for="note in person.notes"
+          :key="`note-${note.id}`"
+          :note="note"
+        />
+      </div>
+      <p
+        v-else
+        class="text-sm italic"
+      >
+        no notes, yet.
+      </p>
+    </section>
   </div>
 </template>
 <script>
@@ -75,14 +121,6 @@ export default {
     addingRelation: false,
     addingNote: false
   }),
-  beforeMount () {
-    this.loadPerson()
-  },
-  watch: {
-    $route (to, from) {
-      this.loadPerson()
-    }
-  },
   computed: {
     ...mapState('people', {
       person: state => state.active
@@ -90,6 +128,14 @@ export default {
     ...mapGetters({
       getPerson: 'people/getPerson'
     })
+  },
+  watch: {
+    $route (to, from) {
+      this.loadPerson()
+    }
+  },
+  beforeMount () {
+    this.loadPerson()
   },
   methods: {
     async loadPerson () {

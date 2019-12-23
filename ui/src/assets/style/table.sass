@@ -1,0 +1,27 @@
+table,.table
+  @apply m-2 bg-gray-400 text-gray-900 rounded
+
+thead
+  @apply bg-gray-600 text-gray-100
+  tr
+    @apply rounded-t
+  th
+    &:first-child
+      @apply rounded-tl
+    &:last-child
+      @apply rounded-tr
+th,td
+  @apply px-2 py-1 text-left pr-8
+  &:last-child
+    @apply pr-2
+
+tr
+  @apply border-b border-gray-700
+  &:last-child
+    @apply border-0
+
+.table-parameters
+  @apply text-sm
+  tr
+    >td:first-child,td:last-child
+      @apply font-mono text-sm
