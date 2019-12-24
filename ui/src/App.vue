@@ -24,6 +24,14 @@
             Relations
           </router-link>
         </li>
+        <li>
+          <router-link
+            to="/diary"
+            class="link-nav"
+          >
+            Diary
+          </router-link>
+        </li>
       </ul>
     </div>
     <router-view class="router-view" />

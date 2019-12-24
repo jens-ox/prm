@@ -1,48 +1,74 @@
 <template>
   <div>
-    <h1 class="header">Add Property</h1>
+    <h1 class="header">
+      Add Property
+    </h1>
     <div class="fields">
       <div class="field">
         <label for="property-name">Property Name</label>
-        <input type="text" id="property-name" placeholder="Property Name" v-model="propertyName">
+        <input
+          id="property-name"
+          v-model="propertyName"
+          type="text"
+          placeholder="Property Name"
+        >
       </div>
-      <div class="field dropdown" v-on-clickaway="blurSearchPropertyDataType">
+      <div
+        v-on-clickaway="blurSearchPropertyDataType"
+        class="field dropdown"
+      >
         <label for="data-type">Data Type</label>
         <input
           id="data-type"
+          v-model="searchPropertyDataType"
           type="text"
           placeholder="Data Type"
-          v-model="searchPropertyDataType"
           @focus="searchingPropertyDataType = true"
         >
-        <ul class="dropdown-list" v-if="searchingPropertyDataType">
+        <ul
+          v-if="searchingPropertyDataType"
+          class="dropdown-list"
+        >
           <!-- available property data types -->
           <li
             v-for="dataType in filteredPropertyDataTypes"
             :key="`propertyDataType-${dataType.id}`"
             @click="setPropertyDataType(dataType)"
-          >{{ dataType.name }}</li>
+          >
+            {{ dataType.name }}
+          </li>
         </ul>
       </div>
-      <div class="field dropdown" v-on-clickaway="blurSearchPropertyCategory">
+      <div
+        v-on-clickaway="blurSearchPropertyCategory"
+        class="field dropdown"
+      >
         <label for="property-category">Category</label>
         <input
-          type="text"
           id="property-category"
-          placeholder="Property Category"
           v-model="searchPropertyCategory"
+          type="text"
+          placeholder="Property Category"
           @focus="searchingPropertyCategory = true"
         >
-        <ul class="dropdown-list" v-if="searchingPropertyCategory">
+        <ul
+          v-if="searchingPropertyCategory"
+          class="dropdown-list"
+        >
           <!-- available property data types -->
           <li
             v-for="category in filteredPropertyCategories"
             :key="`propertyCategory-${category.id}`"
             @click="setPropertyCategory(category)"
-          >{{ category.name }}</li>
+          >
+            {{ category.name }}
+          </li>
 
           <!-- note: create property category -->
-          <li v-if="!categoryExists" @click="createNewPropertyCategory">
+          <li
+            v-if="!categoryExists"
+            @click="createNewPropertyCategory"
+          >
             Create category "{{ searchPropertyCategory }}"
           </li>
         </ul>
@@ -78,19 +104,6 @@ export default {
       search: () => []
     }
   }),
-  async beforeMount () {
-    // set up data types
-    await this.$store.dispatch('propertyDataTypes/loadAvailable')
-    this.propertyDataTypeSearch = new Fuse(this.availablePropertyDataTypes, {
-      keys: ['name']
-    })
-
-    // set up categories
-    await this.$store.dispatch('propertyCategories/loadAvailable')
-    this.propertyCategorySearch = new Fuse(this.availablePropertyCategories, {
-      keys: ['name']
-    })
-  },
   computed: {
     ...mapState('propertyDataTypes', {
       availablePropertyDataTypes: state => state.available
@@ -124,6 +137,19 @@ export default {
         this.newProperty.propertyDataTypeId !== 0 &&
         this.newProperty.propertyCategory !== 0
     }
+  },
+  async beforeMount () {
+    // set up data types
+    await this.$store.dispatch('propertyDataTypes/loadAvailable')
+    this.propertyDataTypeSearch = new Fuse(this.availablePropertyDataTypes, {
+      keys: ['name']
+    })
+
+    // set up categories
+    await this.$store.dispatch('propertyCategories/loadAvailable')
+    this.propertyCategorySearch = new Fuse(this.availablePropertyCategories, {
+      keys: ['name']
+    })
   },
   methods: {
     async createNewPropertyCategory () {

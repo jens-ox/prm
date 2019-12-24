@@ -120,16 +120,6 @@ export default {
       search: () => []
     }
   }),
-  async beforeMount () {
-    await this.$store.dispatch('relationTypes/loadAvailable')
-    await this.$store.dispatch('people/loadAvailable')
-    this.relationTypeSearch = new Fuse(this.availableRelationTypes, {
-      keys: ['name']
-    })
-    this.peopleSearch = new Fuse(this.availablePeopleWithoutFocused, {
-      keys: ['firstName', 'lastName']
-    })
-  },
   computed: {
     ...mapState('relationTypes', {
       availableRelationTypes: state => state.available
@@ -165,6 +155,16 @@ export default {
     noOtherPersonYet () {
       return this.availablePeopleWithoutFocused.length === 0 && this.searchPersonName === ''
     }
+  },
+  async beforeMount () {
+    await this.$store.dispatch('relationTypes/loadAvailable')
+    await this.$store.dispatch('people/loadAvailable')
+    this.relationTypeSearch = new Fuse(this.availableRelationTypes, {
+      keys: ['name']
+    })
+    this.peopleSearch = new Fuse(this.availablePeopleWithoutFocused, {
+      keys: ['firstName', 'lastName']
+    })
   },
   methods: {
     setPerson (person) {

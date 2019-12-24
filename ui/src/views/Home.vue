@@ -52,13 +52,6 @@ export default {
       search: () => []
     }
   }),
-  async beforeMount () {
-    // load available
-    await this.$store.dispatch('people/loadAvailable')
-    this.peopleSearch = new Fuse(this.availablePeople, {
-      keys: ['firstName', 'lastName']
-    })
-  },
   computed: {
     ...mapState('people', {
       availablePeople: state => state.available
@@ -68,6 +61,13 @@ export default {
         ? this.availablePeople
         : this.peopleSearch.search(this.searchPeople)
     }
+  },
+  async beforeMount () {
+    // load available
+    await this.$store.dispatch('people/loadAvailable')
+    this.peopleSearch = new Fuse(this.availablePeople, {
+      keys: ['firstName', 'lastName']
+    })
   }
 }
 </script>

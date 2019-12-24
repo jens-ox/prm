@@ -78,12 +78,6 @@ export default {
       search: () => []
     }
   }),
-  async beforeMount () {
-    await this.$store.dispatch('propertyTypes/loadAvailable')
-    this.propertyTypeSearch = new Fuse(this.availablePropertyTypes, {
-      keys: ['name']
-    })
-  },
   computed: {
     ...mapState('propertyTypes', {
       availablePropertyTypes: state => state.available
@@ -104,6 +98,12 @@ export default {
     noPropertyYet () {
       return this.availablePropertyTypes.length === 0 && this.searchPropertyType === ''
     }
+  },
+  async beforeMount () {
+    await this.$store.dispatch('propertyTypes/loadAvailable')
+    this.propertyTypeSearch = new Fuse(this.availablePropertyTypes, {
+      keys: ['name']
+    })
   },
   methods: {
     createNewPropertyType () {

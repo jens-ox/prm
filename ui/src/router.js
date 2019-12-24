@@ -28,6 +28,14 @@ export default new Router({
     {
       path: '/person/:id',
       component: () => import(/* webpackChunkName: "person" */ './views/Person.vue')
+    },
+    {
+      path: '/diary',
+      component: () => import(/* webpackChunkName: "diary" */ './views/Diary.vue')
+    },
+    {
+      path: '/diary/new',
+      component: () => import(/* webpackChunkName: "diaryNew" */ './views/NewDiary.vue')
     }
   ]
 })

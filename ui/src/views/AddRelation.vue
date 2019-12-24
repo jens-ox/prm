@@ -1,35 +1,56 @@
 <template>
   <div>
-    <h1 class="header">Add Relation</h1>
+    <h1 class="header">
+      Add Relation
+    </h1>
     <div class="fields">
       <div class="field">
         <label for="relation-name">Relation Name</label>
-        <input type="text" id="relation-name" placeholder="Relation Name" v-model="relationName">
+        <input
+          id="relation-name"
+          v-model="relationName"
+          type="text"
+          placeholder="Relation Name"
+        >
       </div>
-      <div class="field dropdown" v-on-clickaway="blurSearchRelationCategory">
+      <div
+        v-on-clickaway="blurSearchRelationCategory"
+        class="field dropdown"
+      >
         <label for="relation-category">Category</label>
         <input
-          type="text"
           id="relation-category"
-          placeholder="Relation Category"
           v-model="searchRelationCategory"
+          type="text"
+          placeholder="Relation Category"
           @focus="searchingRelationCategory = true"
         >
-        <ul class="dropdown-list" v-if="searchingRelationCategory">
+        <ul
+          v-if="searchingRelationCategory"
+          class="dropdown-list"
+        >
           <!-- available relation categories -->
           <li
             v-for="category in filteredRelationCategories"
             :key="`relationCategory-${category.id}`"
             @click="setRelationCategory(category)"
-          >{{ category.name }}</li>
+          >
+            {{ category.name }}
+          </li>
 
           <!-- note: create relation category -->
-          <li v-if="!categoryExists" @click="createNewRelationCategory">
+          <li
+            v-if="!categoryExists"
+            @click="createNewRelationCategory"
+          >
             Create category "{{ searchRelationCategory }}"
           </li>
 
           <!-- note: no category available yet -->
-          <li v-if="availableRelationCategories.length === 0 && searchRelationCategory === ''" class="no-select">
+          <li
+            v-if="availableRelationCategories.length === 0 && searchRelationCategory === ''"
+            class="no-select"
+          >
             <span class="italic text-gray-500">no relation category available, yet.</span>
           </li>
         </ul>
@@ -37,16 +58,23 @@
     </div>
     <div class="fields">
       <div class="field">
-        <input type="checkbox" v-model="isBidirectional" id="is-bidirectional">
+        <input
+          id="is-bidirectional"
+          v-model="isBidirectional"
+          type="checkbox"
+        >
         <label for="is-bidirectional">Bidirectional</label>
       </div>
-      <div class="field" :style="{
-        visibility: !isBidirectional ? 'visible' : 'hidden'
-      }">
+      <div
+        class="field"
+        :style="{
+          visibility: !isBidirectional ? 'visible' : 'hidden'
+        }"
+      >
         <input
+          v-model="reverseName"
           type="text"
           placeholder="Reverse Name"
-          v-model="reverseName"
         >
       </div>
     </div>
@@ -76,13 +104,6 @@ export default {
       search: () => []
     }
   }),
-  async beforeMount () {
-    // set up categories
-    await this.$store.dispatch('relationCategories/loadAvailable')
-    this.relationCategorySearch = new Fuse(this.availableRelationCategories, {
-      keys: ['name']
-    })
-  },
   computed: {
     ...mapState('relationCategories', {
       availableRelationCategories: state => state.available
@@ -115,6 +136,13 @@ export default {
       return this.newRelation.name !== '' &&
         this.newRelation.relationCategory !== 0
     }
+  },
+  async beforeMount () {
+    // set up categories
+    await this.$store.dispatch('relationCategories/loadAvailable')
+    this.relationCategorySearch = new Fuse(this.availableRelationCategories, {
+      keys: ['name']
+    })
   },
   methods: {
     async createNewRelationCategory () {
