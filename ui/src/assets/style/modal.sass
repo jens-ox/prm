@@ -1,0 +1,19 @@
+.modal
+  @apply fixed bg-white rounded
+  top: 50%
+  left: 50%
+  transform: translate(-50%, calc(-50% - -.4px))
+  z-index: 999
+
+  header
+    @apply p-4 pb-0
+
+  section
+    @apply p-4
+
+  .actions
+    @apply bg-gray-200 rounded-b p-4 py-6
+
+.backdrop
+  @apply w-screen h-screen fixed top-0 left-0 bg-black opacity-50
+  z-index: 998

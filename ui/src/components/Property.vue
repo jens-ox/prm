@@ -3,7 +3,7 @@
     <!-- delete button -->
     <button
       class="icon absolute top-0 right-0 mr-2 mt-1 text-sm bg-transparent"
-      @click="remove"
+      @click="showModal = true"
     >
       <font-awesome-icon icon="trash-alt" />
     </button>
@@ -20,6 +20,40 @@
     <p v-else>
       {{ property.value }}
     </p>
+
+    <!-- modal and backdrop -->
+    <div
+      v-if="showModal"
+      class="modal"
+    >
+      <header>
+        <h3>Remove Property</h3>
+      </header>
+      <section>
+        <p>
+          Are you sure you want to remove the property {{ property.name }}?
+        </p>
+      </section>
+      <div class="actions flex justify-between">
+        <button
+          class="large"
+          @click="showModal = false"
+        >
+          Cancel
+        </button>
+        <button
+          class="primary large danger"
+          @click="remove"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+    <div
+      v-if="showModal"
+      class="backdrop"
+      @click="showModal = false"
+    />
   </div>
 </template>
 <script>
@@ -30,6 +64,9 @@ export default {
       required: true
     }
   },
+  data: () => ({
+    showModal: false
+  }),
   methods: {
     async remove () {
       console.log('removing property: ', this.property.id)
