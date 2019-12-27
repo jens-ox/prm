@@ -1,5 +1,5 @@
 const knex = require('../knex')
-const notes = require('express').Router()
+const diary = require('express').Router()
 
 const extractMentions = async (diaryObject, mentionArray) => {
   console.log('parsing diary object: ', diaryObject)
@@ -19,7 +19,7 @@ const extractMentions = async (diaryObject, mentionArray) => {
  * Query params:
  * - offset: offset
  */
-notes.get('/', async (req, res) => {
+diary.get('/', async (req, res) => {
   const offset = req.query.offset || 0
   const limit = 100
 
@@ -39,7 +39,7 @@ notes.get('/', async (req, res) => {
  * - json: json-formatted diary entry
  * - date: diary date
  */
-notes.post('/', async (req, res, next) => {
+diary.post('/', async (req, res, next) => {
   let { json, date } = req.body
 
   // check that base parameters are set
@@ -71,10 +71,36 @@ notes.post('/', async (req, res, next) => {
   res.json({ id, text, date })
 })
 
+diary.get('/:id', async (req, res, next) => {
+  const id = req.params.id
+  if (!id) return next(new Error('no id set'))
+
+  const result = await knex('diary').select('*').where('id', id).first()
+  res.json(result)
+})
+
+diary.put('/:id', async (req, res, next) => {
+  const id = req.params.id
+  if (!id) return next(new Error('no id set'))
+  const updateObject = {}
+  if (req.body.text) {
+    updateObject.text = typeof req.body.text === 'string'
+      ? req.body.text
+      : JSON.stringify(req.body.text)
+  }
+  if (req.body.date) updateObject.date = req.body.date
+
+  await knex('diary').where('id', id).update(updateObject)
+  res.json({
+    id,
+    ...updateObject
+  })
+})
+
 /**
  * DELETE /:id: delete diary entry with id
  */
-notes.delete('/:id', async (req, res, next) => {
+diary.delete('/:id', async (req, res, next) => {
   const id = req.params.id
   if (!id) return next(new Error('no id set'))
 
@@ -83,4 +109,4 @@ notes.delete('/:id', async (req, res, next) => {
   res.json(result)
 })
 
-module.exports = notes
+module.exports = diary

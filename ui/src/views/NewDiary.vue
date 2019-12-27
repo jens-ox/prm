@@ -1,7 +1,10 @@
 <template>
   <div class="container">
-    <div class="max-w-xl mb-4">
+    <h1>Diary Entry</h1>
+    <div class="max-w-xl field mb-4">
+      <label for="date">Date:</label>
       <input
+        id="date"
         v-model="date"
         type="date"
         placeholder="Enter a date"
@@ -10,7 +13,7 @@
     </div>
     <div class="editor">
       <editor-content
-        class="container p-2 border border-gray-600"
+        class="container p-2"
         :editor="editor"
       />
     </div>
@@ -44,7 +47,8 @@
         class="primary large font-bold"
         @click="save"
       >
-        Save
+        <span v-if="!diaryId">Save</span>
+        <span v-else>Update</span>
       </button>
     </div>
   </div>
@@ -70,8 +74,6 @@ export default {
   components: { EditorContent },
   data () {
     return {
-      json: null,
-      date: null,
       editor: new Editor({
         extensions: [
           new HardBreak(),
@@ -153,7 +155,7 @@ export default {
           new Italic()
         ],
         onUpdate: ({ getJSON }) => {
-          this.json = getJSON()
+          this.text = getJSON()
         }
       }),
       query: null,
@@ -169,51 +171,83 @@ export default {
     ...mapState('people', {
       availablePeople: state => state.available
     }),
+    date: {
+      get () { return this.$store.state.diary.active.date },
+      set (date) { this.$store.commit('diary/setActive', { date }) }
+    },
+    text: {
+      get () { return this.$store.state.diary.active.text },
+      set (text) { this.$store.commit('diary/setActive', { text }) }
+    },
     hasResults () { return this.filteredUsers.length },
-    showSuggestions () { return this.query || this.hasResults }
+    showSuggestions () { return this.query || this.hasResults },
+    diaryId () { return this.$route.params.id }
   },
   async beforeMount () {
     await this.$store.dispatch('people/loadAvailable')
+
+    // check if content is pre-set
+    if (this.diaryId) {
+      console.log('pre-loading content')
+      // load content
+      await this.$store.dispatch('diary/loadInstance', this.diaryId)
+
+      // set content
+      console.log('setting content to:', this.text)
+      this.editor.setContent(this.text)
+    }
   },
 
   methods: {
     async save () {
       console.log('saving new diary entry: ', {
+        id: this.diaryId,
         date: this.date,
-        json: this.json
+        text: this.text
       })
 
-      // store remote
-      const { data } = await this.axios.post('/diary', {
-        date: this.date,
-        json: this.json
-      })
+      // case 1: new entry
+      if (!this.diaryId) {
+        // store remote
+        const { data } = await this.axios.post('/diary', {
+          date: this.date,
+          text: this.text
+        })
 
-      // store local
-      this.$store.commit('diary/addAvailable', data)
+        // store local
+        this.$store.commit('diary/addAvailable', data)
+
+      // case 2: update existing entry
+      } else {
+        await this.axios.put(`/diary/${this.diaryId}`, {
+          date: this.date,
+          text: this.text
+        })
+
+        // update local
+        this.$store.commit('diary/update', {
+          id: this.diaryId,
+          date: this.date,
+          text: this.text
+        })
+      }
+
+      this.$notify({
+        type: 'success',
+        text: 'Successfully stored diary entry.'
+      })
     },
-    // navigate to the previous item
-    // if it's the first item, navigate to the last one
     upHandler () {
       this.navigatedUserIndex = ((this.navigatedUserIndex + this.filteredUsers.length) - 1) % this.filteredUsers.length
     },
-
-    // navigate to the next item
-    // if it's the last item, navigate to the first one
     downHandler () {
       this.navigatedUserIndex = (this.navigatedUserIndex + 1) % this.filteredUsers.length
     },
 
     enterHandler () {
       const user = this.filteredUsers[this.navigatedUserIndex]
-
-      if (user) {
-        this.selectUser(user)
-      }
+      if (user) this.selectUser(user)
     },
-
-    // we have to replace our suggestion text with a mention
-    // so it's important to pass also the position of your suggestion text
     selectUser (user) {
       this.insertMention({
         range: this.suggestionRange,

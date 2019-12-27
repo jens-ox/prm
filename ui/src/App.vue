@@ -3,6 +3,7 @@
     id="app"
     class="min-h-screen leading-normal flex flex-col flex-wrap"
   >
+    <notifications />
     <div
       id="nav"
       class="flex-shrink bg-gray-200"

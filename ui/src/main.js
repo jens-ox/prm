@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import Notifications from 'vue-notification'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus, faSave, faArrowsAltH, faAlignJustify, faTrashAlt, faTimes, faBold, faItalic, faStrikethrough, faUnderline, faCode, faParagraph, faListUl, faListOl, faQuoteLeft, faUndo, faRedo } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -15,6 +16,7 @@ import './assets/style/main.sass'
 axios.defaults.baseURL = 'http://localhost:3000'
 
 Vue.use(VueAxios, axios)
+Vue.use(Notifications)
 library.add(faPlus, faSave, faArrowsAltH, faAlignJustify, faTrashAlt, faTimes, faBold, faItalic, faStrikethrough, faUnderline, faCode, faParagraph, faListUl, faListOl, faQuoteLeft, faUndo, faRedo)
 
 Vue.config.productionTip = false

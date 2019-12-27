@@ -1,5 +1,8 @@
 <template>
-  <div class="card pt-8">
+  <div
+    class="card pt-8 cursor-pointer"
+    @click="$router.push(`/diary/${entry.id}`)"
+  >
     <span class="text-sm text-gray-600">{{ entry.date }}</span>
     <editor-content
       class="editor__content"
