@@ -85,6 +85,17 @@ export default {
 
         resolve(data)
       })
+    },
+    async loadPerson ({ getters, actions }, personId) {
+      // check if person is available in state
+      let person = getters.getPerson(personId)
+
+      // load people if necessary
+      if (!person) await actions.loadAvailable()
+      person = getters.getPerson(personId)
+
+      // return person -- if undefined, the person doesn't exist
+      return person
     }
   }
 }
