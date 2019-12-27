@@ -43,24 +43,29 @@ code
   @apply font-mono font-light text-gray-500 text-sm
 
 h1, h2, h3, h4, h5, .title
-  font-weight: 400
+  @apply font-semibold
   &.header
     @apply inline-block pb-2 mb-2 pr-4 border-b border-gray-600
 
 h1
   @apply text-5xl
+  letter-spacing: -0.05em
 
 h2
   @apply text-4xl
+  letter-spacing: -0.04em
 
 h3
   @apply text-3xl
+  letter-spacing: -0.03em
 
 h4
   @apply text-2xl
+  letter-spacing: -0.02em
 
 h5
   @apply text-xl
+  letter-spacing: -0.01em
 
 header
   @apply flex flex-row items-center mb-4
