@@ -20,10 +20,10 @@ relations.post('/', async (req, res, next) => {
 
   // insert property
   const result = await knex('relatedTo').insert({ firstPersonId, secondPersonId, value, relationTypeId })
-  const relatedToId = result[0]
+  const id = result[0]
 
   // return
-  res.json(relatedToId)
+  res.json({ id, value, firstPersonId, secondPersonId, relationTypeId })
 })
 
 /**

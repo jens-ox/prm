@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import config from '../config'
 
 export default {
   namespaced: true,
@@ -37,7 +36,7 @@ export default {
         // only load if not loaded yet
         if (state.available.length > 0) return resolve()
 
-        const result = await Vue.axios.get(new URL('/relation-types', config.api))
+        const result = await Vue.axios.get('/relation-types')
         commit('setRelationTypes', result.data)
         resolve()
       })
@@ -47,19 +46,16 @@ export default {
       return new Promise(async resolve => {
         // store remove
         console.log('storing relation type: ', state.new)
-        const result = await Vue.axios.post(new URL('/relation-types', config.api), state.new)
+        const { data } = await Vue.axios.post('/relation-types', state.new)
 
         // store local
-        commit('addRelationType', {
-          ...state.new,
-          id: result.data
-        })
+        commit('addRelationType', data)
 
         // reset new
         commit('resetNew')
 
         // resolve
-        resolve(result.data)
+        resolve(data)
       })
     }
   }

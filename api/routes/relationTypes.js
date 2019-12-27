@@ -37,10 +37,10 @@ relationTypes.post('/', async (req, res, next) => {
 
   // insert relation type
   const result = await knex('relationType').insert({ name, reverseName, isBidirectional, relationCategoryId })
-  const relationTypeId = result[0]
+  const id = result[0]
 
   // return
-  res.json(relationTypeId)
+  res.json({ id, name, reverseName, isBidirectional, relationCategoryId })
 })
 
 module.exports = relationTypes

@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import config from '../config'
 
 export default {
   namespaced: true,
@@ -20,7 +19,7 @@ export default {
         // only load if not loaded yet
         if (state.available.length > 0) return resolve()
 
-        const result = await Vue.axios.get(new URL('/property-data-types', config.api))
+        const result = await Vue.axios.get('/property-data-types')
         commit('setPropertyDataTypes', result.data)
         resolve()
       })

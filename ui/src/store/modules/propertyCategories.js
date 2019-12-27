@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import config from '../config'
 
 export default {
   namespaced: true,
@@ -28,7 +27,7 @@ export default {
         // only load if not loaded yet
         if (state.available.length > 0) return resolve()
 
-        const result = await Vue.axios.get(new URL('/property-categories', config.api))
+        const result = await Vue.axios.get('/property-categories')
         commit('setPropertyCategories', result.data)
         resolve()
       })
@@ -37,21 +36,18 @@ export default {
       return new Promise(async resolve => {
         // store remove
         console.log('storing property category: ', state.new)
-        const result = await Vue.axios.post(new URL('/property-categories', config.api), state.new)
+        const { data } = await Vue.axios.post('/property-categories', state.new)
 
-        console.log('new prop category: ', result.data)
+        console.log('new prop category: ', data)
 
         // store local
-        commit('addPropertyCategory', {
-          ...state.new,
-          id: result.data
-        })
+        commit('addPropertyCategory', data)
 
         // reset new
         commit('resetNew')
 
         // resolve
-        resolve(result.data)
+        resolve(data)
       })
     }
   }

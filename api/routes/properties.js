@@ -19,10 +19,10 @@ properties.post('/', async (req, res, next) => {
 
   // insert property
   const result = await knex('hasProperty').insert({ value, personId, propertyTypeId })
-  const hasPropertyId = result[0]
+  const id = result[0]
 
   // return
-  res.json(hasPropertyId)
+  res.json({ id, value, personId, propertyTypeId })
 })
 
 /**

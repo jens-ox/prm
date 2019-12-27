@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import config from '../config'
 
 export default {
   namespaced: true,
@@ -34,7 +33,7 @@ export default {
         // only load if not loaded yet
         if (state.available.length > 0) return resolve()
 
-        const result = await Vue.axios.get(new URL('/property-types', config.api))
+        const result = await Vue.axios.get('/property-types')
         commit('setPropertyTypes', result.data)
         resolve()
       })
@@ -43,19 +42,16 @@ export default {
     async store ({ state, commit }) {
       return new Promise(async resolve => {
         // store remove
-        const result = await Vue.axios.post(new URL('/property-types', config.api), { ...state.new })
+        const { data } = await Vue.axios.post('/property-types', { ...state.new })
 
         // store local
-        commit('addPropertyType', {
-          ...state.new,
-          id: result.data
-        })
+        commit('addPropertyType', data)
 
         // reset new
         commit('resetNew')
 
         // resolve
-        resolve(result.data)
+        resolve(data)
       })
     }
   }

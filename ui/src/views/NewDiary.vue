@@ -1,8 +1,16 @@
 <template>
-  <div>
+  <div class="container">
+    <div class="max-w-xl mb-4">
+      <input
+        v-model="date"
+        type="date"
+        placeholder="Enter a date"
+        class="text-lg border-0 border-b w-full rounded-none"
+      >
+    </div>
     <div class="editor">
       <editor-content
-        class="container p-2 border border-gray-500"
+        class="container p-2 border border-gray-600"
         :editor="editor"
       />
     </div>
@@ -30,6 +38,15 @@
         No users found
       </div>
     </div>
+
+    <div class="bar-buttons mt-4">
+      <button
+        class="primary large font-bold"
+        @click="save"
+      >
+        Save
+      </button>
+    </div>
   </div>
 </template>
 
@@ -53,6 +70,8 @@ export default {
   components: { EditorContent },
   data () {
     return {
+      json: null,
+      date: null,
       editor: new Editor({
         extensions: [
           new HardBreak(),
@@ -132,7 +151,10 @@ export default {
           new Code(),
           new Bold(),
           new Italic()
-        ]
+        ],
+        onUpdate: ({ getJSON }) => {
+          this.json = getJSON()
+        }
       }),
       query: null,
       suggestionRange: null,
@@ -155,6 +177,21 @@ export default {
   },
 
   methods: {
+    async save () {
+      console.log('saving new diary entry: ', {
+        date: this.date,
+        json: this.json
+      })
+
+      // store remote
+      const { data } = await this.axios.post('/diary', {
+        date: this.date,
+        json: this.json
+      })
+
+      // store local
+      this.$store.commit('diary/addAvailable', data)
+    },
     // navigate to the previous item
     // if it's the first item, navigate to the last one
     upHandler () {
@@ -217,60 +254,3 @@ export default {
   }
 }
 </script>
-
-<style lang="sass">
-
-.mention
-  @apply bg-gray-600 text-sm font-semibold rounded p-1 whitespace-no-wrap
-
-.suggestion-list
-  @apply text-sm rounded
-
-  &__no-results
-    padding: 0.2rem 0.5rem
-
-  &__item
-    border-radius: 5px
-    padding: 0.2rem 0.5rem
-    margin-bottom: 0.2rem
-    cursor: pointer
-
-    &:last-child
-      margin-bottom: 0
-
-    &.is-selected,
-    &:hover
-      background-color: rgba(#fff, 0.2)
-
-    &.is-empty
-      opacity: 0.5
-
-.tippy-tooltip.dark-theme
-  background-color: #000
-  padding: 0
-  font-size: 1rem
-  text-align: inherit
-  color: #fff
-  border-radius: 5px
-
-  .tippy-backdrop
-    display: none
-
-  .tippy-roundarrow
-    fill: #000
-
-  .tippy-popper[x-placement^=top] & .tippy-arrow
-    border-top-color: #000
-
-  .tippy-popper[x-placement^=bottom] & .tippy-arrow
-    border-bottom-color: #000
-
-  .tippy-popper[x-placement^=left] & .tippy-arrow
-    border-left-color: #000
-
-  .tippy-popper[x-placement^=right] & .tippy-arrow
-    border-right-color: #000
-
-.ProseMirror
-  @apply outline-none
-</style>

@@ -37,6 +37,9 @@ app.use('/relation-categories', require('./routes/relationCategories'))
 // -- notes
 app.use('/notes', require('./routes/notes'))
 
+// -- diary
+app.use('/diary', require('./routes/diary'))
+
 // error handling
 app.use(function (err, req, res, next) {
   console.error(err.stack)

@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-4 px-4 py-2 rounded border-gray-300 border relative">
+  <div class="card">
     <!-- delete button -->
     <button
       class="icon absolute top-0 right-0 mr-2 mt-1 text-sm bg-transparent"

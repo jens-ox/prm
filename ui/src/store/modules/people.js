@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import config from '../config'
 
 export default {
   namespaced: true,
@@ -7,10 +6,7 @@ export default {
     available: [],
     new: {
       firstName: '',
-      lastName: '',
-      properties: [],
-      relations: [],
-      notes: []
+      lastName: ''
     },
     active: {
       id: 0,
@@ -18,7 +14,8 @@ export default {
       lastName: '',
       properties: [],
       relations: [],
-      notes: []
+      notes: [],
+      diaries: []
     }
   },
   getters: {
@@ -42,19 +39,9 @@ export default {
     // new
     setFirstName (state, firstName) { state.new.firstName = firstName },
     setLastName (state, lastName) { state.new.lastName = lastName },
-    addProperty (state, property) { state.new.properties.push(property) },
-    removeProperty (state, property) {
-      const index = state.new.properties.findIndex(existingProperty =>
-        existingProperty.value === property.value && existingProperty.propertyTypeId === property.propertyTypeId)
-      if (index === -1) return
-      state.new.properties.splice(index, 1)
-    },
     resetNew (state) {
       state.new.firstName = ''
       state.new.lastName = ''
-      state.new.properties = []
-      state.new.relations = []
-      state.new.notes = []
     }
   },
   actions: {
@@ -65,7 +52,7 @@ export default {
         // only load if not loaded yet
         if (state.available.length > 0) return resolve()
 
-        const result = await Vue.axios.get(new URL('/people', config.api))
+        const result = await Vue.axios.get('/people')
         commit('setPeople', result.data)
         resolve()
       })
@@ -74,7 +61,7 @@ export default {
       console.log('loading person: ', id)
 
       return new Promise(async resolve => {
-        const result = await Vue.axios.get(new URL(`/people/by-id/${id}`, config.api))
+        const result = await Vue.axios.get(`/people/by-id/${id}`)
         console.log('result: ', result.data)
         commit('setActive', {
           ...result.data,
@@ -88,18 +75,15 @@ export default {
         console.log('storing person: ', state.new)
 
         // store remote
-        const result = await Vue.axios.post(new URL('/people', config.api), state.new)
+        const { data } = await Vue.axios.post('/people', state.new)
 
         // store local
-        commit('addPerson', {
-          ...state.new,
-          id: result.data
-        })
+        commit('addPerson', data)
 
         // reset new
         commit('resetNew')
 
-        resolve(result.data)
+        resolve(data)
       })
     }
   }

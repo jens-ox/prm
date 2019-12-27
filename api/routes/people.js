@@ -26,50 +26,22 @@ people.get('/', async (req, res, next) => {
  * Body:
  * - firstName: string
  * - lastName: string
- * - relations: [{ personId, relationTypeId }]
- * - properties: [{ value, propertyTypeId }]
  */
 people.post('/', async (req, res, next) => {
   console.log(req.body)
-  const { relations = [], properties = [], notes = [], ...person } = req.body
-  console.log('adding person: ', { person, relations, properties })
+  const { firstName, lastName } = req.body
+  console.log('adding person: ', { firstName, lastName })
 
   // check that base parameters are set
-  if (!person.firstName) return next(new Error('no first name set'))
-  if (!person.lastName) return next(new Error('no last name set'))
+  if (!firstName) return next(new Error('no first name set'))
+  if (!lastName) return next(new Error('no last name set'))
 
   // insert person
-  const result = await knex('person').insert(person)
-  const personId = result[0]
-
-  // create relations if necessary
-  if (relations.length !== 0) {
-    await knex('relatedTo').insert(relations.map(relation => ({
-      firstPersonId: personId,
-      secondPersonId: relation.personId,
-      relationTypeId: relation.relationTypeId
-    })))
-  }
-
-  // create properties if necessary
-  if (properties.length > 0) {
-    await knex('hasProperty').insert(properties.map(property => ({
-      personId,
-      value: property.value,
-      propertyTypeId: property.propertyTypeId
-    })))
-  }
-
-  // create notes if necessary
-  if (notes.length > 0) {
-    await knex('note').insert(notes.map(note => ({
-      personId,
-      ...note
-    })))
-  }
+  const result = await knex('person').insert({ firstName, lastName })
+  const id = result[0]
 
   // return
-  res.json(personId)
+  res.json({ id, firstName, lastName })
 })
 
 people.get('/by-property-type/:type', async (req, res, next) => {
@@ -141,11 +113,17 @@ people.get('/by-id/:id', async (req, res, next) => {
     .select('*')
     .from('note')
     .where('personId', id)
+  const diaryResult = await knex
+    .select('diary.*')
+    .from('mentioned')
+    .where('personId', id)
+    .join('diary', 'diary.id', 'mentioned.diaryId')
   const data = {
     ...result,
     properties: propertyResult,
     relations: relationResult,
-    notes: notesResult
+    notes: notesResult,
+    diaries: diaryResult
   }
   res.json(data)
 })

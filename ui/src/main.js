@@ -11,14 +11,14 @@ import './registerServiceWorker'
 
 import './assets/style/main.sass'
 
+// set axios base url
+axios.defaults.baseURL = 'http://localhost:3000'
+
 Vue.use(VueAxios, axios)
 library.add(faPlus, faSave, faArrowsAltH, faAlignJustify, faTrashAlt, faTimes, faBold, faItalic, faStrikethrough, faUnderline, faCode, faParagraph, faListUl, faListOl, faQuoteLeft, faUndo, faRedo)
 
 Vue.config.productionTip = false
 Vue.component('font-awesome-icon', FontAwesomeIcon)
-
-// register API globally
-Vue.prototype.$api = 'http://localhost:3000'
 
 new Vue({
   router,

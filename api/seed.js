@@ -117,6 +117,27 @@ module.exports = async () => {
     })
   }
 
+  // diary
+  const hasDiary = await knex.schema.hasTable('diary')
+  if (!hasDiary) {
+    console.log('creating table diary')
+    await knex.schema.createTable('diary', table => {
+      table.bigIncrements('id')
+      table.text('text')
+      table.string('date')
+    })
+  }
+
+  // mentioned
+  const hasMentioned = await knex.schema.hasTable('mentioned')
+  if (!hasMentioned) {
+    console.log('creating table mentioned')
+    await knex.schema.createTable('mentioned', table => {
+      table.bigInteger('diaryId').references('id').inTable('diary')
+      table.integer('personId').references('id').inTable('person')
+    })
+  }
+
   /**
    * Base Data
    * Here, the default data is seeded, if necessary

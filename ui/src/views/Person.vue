@@ -102,6 +102,26 @@
         no notes, yet.
       </p>
     </section>
+
+    <!-- diary entries -->
+    <header>
+      <h3>Diary Entries</h3>
+    </header>
+    <section class="max-w-xl">
+      <div v-if="person.diaries.length > 0">
+        <diary-preview
+          v-for="diary in person.diaries"
+          :key="diary.id"
+          :entry="diary"
+        />
+      </div>
+      <p
+        v-else
+        class="text-sm italic"
+      >
+        no diary entries, yet.
+      </p>
+    </section>
   </div>
 </template>
 <script>
@@ -113,9 +133,10 @@ import AddNote from '@/components/AddNote.vue'
 import Note from '@/components/Note.vue'
 import Relation from '@/components/Relation.vue'
 import Property from '@/components/Property.vue'
+import DiaryPreview from '@/components/DiaryPreview.vue'
 
 export default {
-  components: { AddProperty, AddRelation, AddNote, Note, Relation, Property },
+  components: { AddProperty, AddRelation, AddNote, Note, Relation, Property, DiaryPreview },
   data: () => ({
     addingProperty: false,
     addingRelation: false,

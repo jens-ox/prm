@@ -33,10 +33,10 @@ relationCategories.post('/', async (req, res, next) => {
 
   // insert relation category
   const result = await knex('relationCategory').insert({ name })
-  const relationCategoryId = result[0]
+  const id = result[0]
 
   // return
-  res.json(relationCategoryId)
+  res.json({ id, name })
 })
 
 module.exports = relationCategories

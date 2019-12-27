@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import config from '../config'
 
 export default {
   namespaced: true,
@@ -29,25 +28,21 @@ export default {
         console.log('storing relation: ', state.new)
 
         // store remote
-        const result = await Vue.axios.post(new URL('/relations', config.api), state.new)
-
-        // load relation name for local
-        const name = rootGetters['relationTypes/getRelation'](state.new.relationTypeId).name
+        const { data } = await Vue.axios.post('/relations', state.new)
 
         // store local
-        const payload = { ...state.new, name }
-        console.log('storing local relation: ', payload)
-        commit('people/addActiveRelation', payload, { root: true })
+        console.log('storing local relation: ', data)
+        commit('people/addActiveRelation', data, { root: true })
 
         // reset new
         commit('resetNew')
 
-        resolve(result.data)
+        resolve(data)
       })
     },
     async remove ({ commit }, id) {
       return new Promise(async resolve => {
-        const result = await Vue.axios.delete(new URL(`relations/${id}`, config.api))
+        const result = await Vue.axios.delete(`relations/${id}`)
 
         // remove local
         commit('people/removeActiveRelation', id, { root: true })

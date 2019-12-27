@@ -5,7 +5,7 @@
   >
     <div
       id="nav"
-      class="bg-gray-600 flex-shrink"
+      class="flex-shrink bg-gray-200"
     >
       <ul class="list-nav">
         <li>
@@ -34,7 +34,7 @@
         </li>
       </ul>
     </div>
-    <router-view class="router-view" />
+    <router-view class="router-view container" />
   </div>
 </template>
 <style lang="sass">

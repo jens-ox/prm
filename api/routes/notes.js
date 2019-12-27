@@ -39,10 +39,10 @@ notes.post('/', async (req, res, next) => {
 
   // insert note
   const result = await knex('note').insert({ personId, timestamp, text })
-  const noteId = result[0]
+  const id = result[0]
 
   // return
-  res.json(noteId)
+  res.json({ id, text, timestamp, personId })
 })
 
 /**

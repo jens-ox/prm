@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import config from '../config'
 
 export default {
   namespaced: true,
@@ -28,7 +27,7 @@ export default {
         // only load if not loaded yet
         if (state.available.length > 0) return resolve()
 
-        const result = await Vue.axios.get(new URL('/relation-categories', config.api))
+        const result = await Vue.axios.get('/relation-categories')
         commit('setRelationCategories', result.data)
         resolve()
       })
@@ -37,21 +36,18 @@ export default {
       return new Promise(async resolve => {
         // store remove
         console.log('storing relation category: ', state.new)
-        const result = await Vue.axios.post(new URL('/relation-categories', config.api), state.new)
+        const { data } = await Vue.axios.post('/relation-categories', state.new)
 
-        console.log('new prop category: ', result.data)
+        console.log('new prop category: ', data)
 
         // store local
-        commit('addRelationCategory', {
-          ...state.new,
-          id: result.data
-        })
+        commit('addRelationCategory', data)
 
         // reset new
         commit('resetNew')
 
         // resolve
-        resolve(result.data)
+        resolve(data)
       })
     }
   }

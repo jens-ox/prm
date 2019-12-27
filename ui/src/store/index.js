@@ -17,8 +17,11 @@ import relationCategories from './modules/relationCategories'
 // note
 import note from './modules/note'
 
+// diary stuff
+import diary from './modules/diary'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  modules: { people, properties, propertyTypes, propertyDataTypes, propertyCategories, relatedTo, relationTypes, relationCategories, note }
+  modules: { people, properties, propertyTypes, propertyDataTypes, propertyCategories, relatedTo, relationTypes, relationCategories, note, diary }
 })

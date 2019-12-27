@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import config from '../config'
 
 export default {
   namespaced: true,
@@ -26,25 +25,21 @@ export default {
         console.log('storing property: ', state.new)
 
         // store remote
-        const result = await Vue.axios.post(new URL('/properties', config.api), state.new)
-
-        // load property name for local
-        const name = rootGetters['propertyTypes/getProperty'](state.new.propertyTypeId).name
+        const { data } = await Vue.axios.post('/properties', state.new)
 
         // store local
-        const payload = { ...state.new, name, personId: result.data }
-        console.log('storing local property: ', payload)
-        commit('people/addActiveProperty', payload, { root: true })
+        console.log('storing local property: ', data)
+        commit('people/addActiveProperty', data, { root: true })
 
         // reset new
         commit('resetNew')
 
-        resolve(result.data)
+        resolve(data)
       })
     },
     async remove ({ commit }, id) {
       return new Promise(async resolve => {
-        const result = await Vue.axios.delete(new URL(`properties/${id}`, config.api))
+        const result = await Vue.axios.delete(`properties/${id}`)
 
         // remove local
         commit('people/removeActiveProperty', id, { root: true })

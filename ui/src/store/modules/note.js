@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import config from '../config'
 
 export default {
   namespaced: true,
@@ -26,23 +25,21 @@ export default {
         console.log('storing note: ', state.new)
 
         // store remote
-        const result = await Vue.axios.post(new URL('/notes', config.api), state.new)
+        const { data } = await Vue.axios.post('/notes', state.new)
 
         // store local
-        const timestamp = state.new.timestamp || Date.now()
-        const payload = { ...state.new, timestamp, name, noteId: result.data }
-        console.log('storing local note: ', payload)
-        commit('people/addActiveNote', payload, { root: true })
+        console.log('storing local note: ', data)
+        commit('people/addActiveNote', data, { root: true })
 
         // reset new
         commit('resetNew')
 
-        resolve(result.data)
+        resolve(data)
       })
     },
     async remove ({ commit }, id) {
       return new Promise(async resolve => {
-        const result = await Vue.axios.delete(new URL(`notes/${id}`, config.api))
+        const result = await Vue.axios.delete(`notes/${id}`)
 
         // remove local
         commit('people/removeActiveNote', id, { root: true })

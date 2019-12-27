@@ -38,10 +38,10 @@ propertyTypes.post('/', async (req, res, next) => {
 
   // insert property type
   const result = await knex('propertyType').insert({ name, propertyCategoryId, propertyDataTypeId })
-  const propertyTypeId = result[0]
+  const id = result[0]
 
   // return
-  res.json(propertyTypeId)
+  res.json({ id, name, propertyCategoryId, propertyDataTypeId })
 })
 
 module.exports = propertyTypes
