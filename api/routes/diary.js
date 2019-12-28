@@ -36,23 +36,23 @@ diary.get('/', async (req, res) => {
  * POST /: create new diary entry
  *
  * Body:
- * - json: json-formatted diary entry
+ * - text: json-formatted diary entry
  * - date: diary date
  */
 diary.post('/', async (req, res, next) => {
-  let { json, date } = req.body
+  let { text, date } = req.body
 
   // check that base parameters are set
-  if (!json) return next(new Error('no json set'))
+  if (!text) return next(new Error('no json set'))
   if (!date) date = new Date().toISOString().split('T')[0]
-  const text = JSON.stringify(json)
+  if (typeof text !== 'string') text = JSON.stringify(text)
   console.log('json: ', text)
   console.log('date: ', date)
 
   // extract mentions
   // TODO this needs to be refactored when different things (like places) can be mentioned
   const mentionArray = []
-  await extractMentions(json, mentionArray)
+  await extractMentions(text, mentionArray)
   console.log('mentions: ', mentionArray)
 
   // insert new diary entry
@@ -83,14 +83,26 @@ diary.put('/:id', async (req, res, next) => {
   const id = req.params.id
   if (!id) return next(new Error('no id set'))
   const updateObject = {}
-  if (req.body.text) {
-    updateObject.text = typeof req.body.text === 'string'
-      ? req.body.text
-      : JSON.stringify(req.body.text)
+  const { text, date } = req.body
+  if (text) {
+    updateObject.text = typeof text === 'string' ? text : JSON.stringify(text)
   }
-  if (req.body.date) updateObject.date = req.body.date
+  if (date) updateObject.date = date
 
   await knex('diary').where('id', id).update(updateObject)
+
+  // remove and re-compute mentions
+  await knex('mentioned').where('diaryId', id).del()
+
+  const mentionArray = []
+  await extractMentions(text, mentionArray)
+  mentionArray.forEach(async personId => {
+    await knex('mentioned').insert({
+      diaryId: id,
+      personId
+    })
+  })
+
   res.json({
     id,
     ...updateObject
