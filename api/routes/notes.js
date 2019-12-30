@@ -21,6 +21,19 @@ notes.get('/:id', async (req, res, next) => {
   res.json(result)
 })
 
+notes.put('/:id', async (req, res) => {
+  const id = req.params.id
+  const { personId, timestamp, text } = req.body
+  const updateObject = {}
+  if (personId) updateObject.personId = personId
+  if (timestamp) updateObject.timestamp = timestamp
+  if (text) updateObject.text = text
+
+  await knex('note').where('id', id).update(updateObject)
+
+  res.json({ id, ...updateObject })
+})
+
 /**
  * POST /: create new note
  *

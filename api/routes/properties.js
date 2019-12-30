@@ -25,6 +25,20 @@ properties.post('/', async (req, res, next) => {
   res.json({ id, value, personId, propertyTypeId })
 })
 
+properties.put('/:id', async (req, res, next) => {
+  const { value, personId, propertyTypeId } = req.body
+  const id = req.params.id
+
+  const updateObject = {}
+  if (value) updateObject.value = value
+  if (personId) updateObject.personId = personId
+  if (propertyTypeId) updateObject.propertyTypeId = propertyTypeId
+
+  await knex('hasProperty').where('id', id).update(updateObject)
+
+  res.json({ id, ...updateObject })
+})
+
 /**
  * DELETE /:id: delete property with id
  */
