@@ -37,6 +37,13 @@ export default {
         resolve(data)
       })
     },
+    async update ({ commit }, note) {
+      console.log('updating note: ', note)
+      await Vue.axios.put(`notes/${note.id}`, note)
+
+      // update local
+      commit('people/updateActiveNote', note, { root: true })
+    },
     async remove ({ commit }, id) {
       return new Promise(async resolve => {
         const result = await Vue.axios.delete(`notes/${id}`)

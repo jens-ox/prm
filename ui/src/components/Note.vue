@@ -1,5 +1,8 @@
 <template>
-  <div class="card">
+  <div
+    class="card cursor-pointer"
+    @click="showNote = true"
+  >
     <!-- delete button -->
     <button
       class="icon absolute top-0 right-0 mr-2 mt-1 text-sm bg-transparent"
@@ -43,10 +46,41 @@
         </button>
       </div>
     </div>
+
+    <!-- view and edit note modal -->
     <div
-      v-if="showModal"
+      v-show="showNote"
+      class="modal cursor-default"
+    >
+      <header>
+        Note
+      </header>
+      <section>
+        <textarea
+          id="note-text"
+          v-model="note.text"
+          class="border-none"
+        />
+      </section>
+      <div class="actions flex justify-between">
+        <button
+          class="large"
+          @click.stop="showNote = false"
+        >
+          Cancel
+        </button>
+        <button
+          class="primary large"
+          @click="update"
+        >
+          Update
+        </button>
+      </div>
+    </div>
+    <div
+      v-if="modalVisible"
       class="backdrop"
-      @click="showModal = false"
+      @click.stop="closeModal"
     />
   </div>
 </template>
@@ -59,12 +93,29 @@ export default {
     }
   },
   data: () => ({
-    showModal: false
+    showModal: false,
+    showNote: false
   }),
+  computed: {
+    modalVisible () {
+      return this.showModal || this.showNote
+    }
+  },
   methods: {
     async remove () {
       console.log('removing note: ', this.note.id)
       await this.$store.dispatch('note/remove', this.note.id)
+    },
+    async update () {
+      console.log('updating note: ', this.note)
+      await this.$store.dispatch('note/update', this.note)
+
+      // hide popup
+      this.showNote = false
+    },
+    closeModal () {
+      this.showModal = false
+      this.showNote = false
     }
   }
 }
