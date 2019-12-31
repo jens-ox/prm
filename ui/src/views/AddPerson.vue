@@ -66,10 +66,10 @@ export default {
   methods: {
     async storePerson (repeat = false) {
       if (!this.saveable) return
-      const newPersonId = await this.$store.dispatch('people/store')
+      const { id } = await this.$store.dispatch('people/store')
       if (!repeat) {
         // redirect
-        this.$router.push(`/person/${newPersonId}`)
+        this.$router.push(`/person/${id}`)
       }
     }
   }
