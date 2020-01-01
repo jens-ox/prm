@@ -6,7 +6,7 @@
     <!-- delete button -->
     <button
       class="icon absolute top-0 right-0 mr-2 mt-1 text-sm bg-transparent"
-      @click="showModal = true"
+      @click.stop="showModal = true"
     >
       <font-awesome-icon icon="trash-alt" />
     </button>
