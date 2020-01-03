@@ -26,6 +26,10 @@ export default {
       state.available[index] = { id, text, date }
     }
   },
+  getters: {
+    byId: state => id => state.available.find(d => d.id === id),
+    byPersonId: state => personId => state.available.filter(d => d.personId === personId)
+  },
   actions: {
     async loadAvailable ({ state, commit }) {
       console.log('loading available diary entries')

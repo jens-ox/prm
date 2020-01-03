@@ -12,7 +12,7 @@ export default {
     addRelationCategory (state, category) { state.available.push(category) },
     setRelationCategories (state, relationCategoryArray) { state.available = relationCategoryArray },
     setNewName (state, name) { state.new.name = name },
-    resetNew (state) {
+    resetActive (state) {
       state.new.name = ''
     }
   },
@@ -44,7 +44,7 @@ export default {
         commit('addRelationCategory', data)
 
         // reset new
-        commit('resetNew')
+        commit('resetActive')
 
         // resolve
         resolve(data)

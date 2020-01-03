@@ -12,7 +12,7 @@ export default {
     addPropertyCategory (state, category) { state.available.push(category) },
     setPropertyCategories (state, propertyCategoryArray) { state.available = propertyCategoryArray },
     setNewName (state, name) { state.new.name = name },
-    resetNew (state) {
+    resetActive (state) {
       state.new.name = ''
     }
   },
@@ -44,7 +44,7 @@ export default {
         commit('addPropertyCategory', data)
 
         // reset new
-        commit('resetNew')
+        commit('resetActive')
 
         // resolve
         resolve(data)

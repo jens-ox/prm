@@ -3,39 +3,53 @@ import Vue from 'vue'
 export default {
   namespaced: true,
   state: {
-    new: {
+    active: {
+      id: 0,
       personId: 0,
       timestamp: 0,
       text: ''
-    }
+    },
+    available: []
   },
   mutations: {
-    setPerson (state, personId) { state.new.personId = personId },
-    setText (state, text) { state.new.text = text },
-    setTimestamp (state, timestamp) { state.new.timestamp = timestamp },
-    resetNew (state) {
-      state.new.personId = 0
-      state.new.timestamp = 0
-      state.new.text = ''
+    setPerson (state, personId) { state.active.personId = personId },
+    setText (state, text) { state.active.text = text },
+    setTimestamp (state, timestamp) { state.active.timestamp = timestamp },
+    resetActive (state) {
+      state.active.id = 0
+      state.active.personId = 0
+      state.active.timestamp = 0
+      state.active.text = ''
+    },
+    add (state, note) {
+      const exists = state.available.find(d => d.id === note.id)
+      if (!exists) state.available.push(note)
     }
   },
+  getters: {
+    byId: state => id => state.available.find(d => d.id === id),
+    byPersonId: state => personId => state.available.filter(d => d.personId === personId)
+  },
   actions: {
-    async store ({ state, commit, rootGetters }) {
-      return new Promise(async resolve => {
-        console.log('storing note: ', state.new)
+    async store ({ state, commit }) {
+      const { id, ...newNote } = state.active
+      const { data } = await Vue.axios.post('/notes', newNote)
+      commit('add', data)
+      commit('resetActive')
+      return data
+    },
+    async get ({ commit, getters }, id) {
+      const note = getters.byId(id)
+      if (note) return note
 
-        // store remote
-        const { data } = await Vue.axios.post('/notes', state.new)
-
-        // store local
-        console.log('storing local note: ', data)
-        commit('people/addActiveNote', data, { root: true })
-
-        // reset new
-        commit('resetNew')
-
-        resolve(data)
-      })
+      // load if unavailable, push to state and return
+      const { data } = await Vue.axios.get(`notes/${id}`)
+      commit('add', data)
+      return data
+    },
+    async loadForPerson ({ commit }, personId) {
+      const { data } = await Vue.axios.get(`notes/by-person/${personId}`)
+      data.forEach(d => commit('add', d))
     },
     async update ({ commit }, note) {
       console.log('updating note: ', note)

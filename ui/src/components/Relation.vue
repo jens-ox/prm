@@ -57,8 +57,8 @@
 <script>
 export default {
   props: {
-    relation: {
-      type: Object,
+    relationId: {
+      type: Number,
       required: true
     }
   },
@@ -66,35 +66,12 @@ export default {
     showModal: false
   }),
   computed: {
-    activePersonId () {
-      return parseInt(this.$route.params.id || this.$store.state.people.active.id)
-    },
-    relatedPerson () {
-      if (this.activePersonId === this.relation.firstPersonId) {
-        return {
-          firstName: this.relation.secondPersonFirstName,
-          lastName: this.relation.secondPersonLastName,
-          id: this.relation.secondPersonId
-        }
-      } else {
-        return {
-          firstName: this.relation.firstPersonFirstName,
-          lastName: this.relation.firstPersonLastName,
-          id: this.relation.firstPersonId
-        }
-      }
-    },
-    relationName () {
-      // base case bidirectional: return relationTypeName
-      if (this.relation.relationTypeBidirectional) return this.relation.relationTypeName
-
-      // depends on whether active person is firstPerson
-      if (this.activePersonId === this.relation.firstPersonId) {
-        return this.relation.relationTypeName
-      } else {
-        return this.relation.relationTypeReverseName
-      }
+    relation () {
+      return this.$store.getters['relatedTo/byId'](this.relationId)
     }
+  },
+  async beforeMount () {
+    await this.$store.dispatch('relatedTo/get', this.relationId)
   },
   methods: {
     async remove () {

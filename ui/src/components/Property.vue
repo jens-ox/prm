@@ -59,8 +59,8 @@
 <script>
 export default {
   props: {
-    property: {
-      type: Object,
+    propertyId: {
+      type: Number,
       required: true
     }
   },

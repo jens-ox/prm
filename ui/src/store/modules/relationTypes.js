@@ -18,7 +18,7 @@ export default {
     setNewReverseName (state, name) { state.new.reverseName = name },
     setNewCategory (state, categoryId) { state.new.relationCategoryId = categoryId },
     setNewBidirectional (state, isBidirectional) { state.new.isBidirectional = isBidirectional },
-    resetNew (state) {
+    resetActive (state) {
       state.new.name = ''
       state.new.reverseName = ''
       state.new.isBidirectional = false
@@ -52,7 +52,7 @@ export default {
         commit('addRelationType', data)
 
         // reset new
-        commit('resetNew')
+        commit('resetActive')
 
         // resolve
         resolve(data)

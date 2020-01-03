@@ -11,11 +11,7 @@ export default {
     active: {
       id: 0,
       firstName: '',
-      lastName: '',
-      properties: [],
-      relations: [],
-      notes: [],
-      diaries: []
+      lastName: ''
     }
   },
   getters: {
@@ -28,29 +24,11 @@ export default {
 
     // active
     setActive (state, payload) { state.active = payload },
-    addActiveProperty (state, property) { state.active.properties.push(property) },
-    addActiveRelation (state, relation) { state.active.relations.push(relation) },
-    addActiveNote (state, note) { state.active.notes.push(note) },
-
-    removeActiveProperty (state, id) { state.active.properties = state.active.properties.filter(property => property.id !== id) },
-    removeActiveRelation (state, id) { state.active.relations = state.active.relations.filter(relation => relation.id !== id) },
-    removeActiveNote (state, id) { state.active.notes = state.active.notes.filter(note => note.id !== id) },
-    updateActiveNote (state, note) {
-      const index = state.active.notes.findIndex(exNote => exNote.id === note.id)
-      if (index === -1) {
-        Vue.$notify({
-          type: 'error',
-          text: 'Could not find note to be updated.'
-        })
-        return
-      }
-      state.active.notes[index] = note
-    },
 
     // new
     setFirstName (state, firstName) { state.new.firstName = firstName },
     setLastName (state, lastName) { state.new.lastName = lastName },
-    resetNew (state) {
+    resetActive (state) {
       state.new.firstName = ''
       state.new.lastName = ''
     }
@@ -92,7 +70,7 @@ export default {
         commit('addPerson', data)
 
         // reset new
-        commit('resetNew')
+        commit('resetActive')
 
         resolve(data)
       })

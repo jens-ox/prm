@@ -20,11 +20,11 @@
         <add-property @add="addProperty" />
       </div>
       <div
-        v-if="person.properties.length > 0"
+        v-if="properties.length > 0"
         class="flex flex-col max-w-xl mt-2"
       >
         <property
-          v-for="property in person.properties"
+          v-for="property in properties"
           :key="`property-${property.id}`"
           :property="property"
         />
@@ -53,13 +53,13 @@
         <add-relation @add="addRelation" />
       </div>
       <div
-        v-if="person.relations.length > 0"
+        v-if="relations.length > 0"
         class="flex flex-col max-w-xl mt-2"
       >
         <relation
-          v-for="relation in person.relations"
+          v-for="relation in relations"
           :key="`relation-${relation.id}`"
-          :relation="relation"
+          :relation-id="relation.id"
         />
       </div>
       <p
@@ -86,11 +86,11 @@
         <add-note @add="addNote" />
       </div>
       <div
-        v-if="person.notes.length > 0"
+        v-if="notes.length > 0"
         class="flex flex-col max-w-xl mt-2"
       >
         <note
-          v-for="note in person.notes"
+          v-for="note in notes"
           :key="`note-${note.id}`"
           :note="note"
         />
@@ -108,9 +108,9 @@
       <h3>Diary Entries</h3>
     </header>
     <section class="max-w-xl">
-      <div v-if="person.diaries.length > 0">
+      <div v-if="diaries.length > 0">
         <diary-preview
-          v-for="diary in person.diaries"
+          v-for="diary in diaries"
           :key="diary.id"
           :entry="diary"
         />
@@ -143,12 +143,25 @@ export default {
     addingNote: false
   }),
   computed: {
+    id () { return this.$route.params.id },
     ...mapState('people', {
       person: state => state.active
     }),
     ...mapGetters({
       getPerson: 'people/getPerson'
-    })
+    }),
+    relations () {
+      return this.$store.getters['relatedTo/byPersonId'](this.id)
+    },
+    properties () {
+      return this.$store.getters['properties/byPersonId'](this.id)
+    },
+    notes () {
+      return this.$store.getters['note/byPersonId'](this.id)
+    },
+    diaries () {
+      return this.$store.getters['diary/byPersonId'](this.id)
+    }
   },
   watch: {
     $route (to, from) {
@@ -160,11 +173,14 @@ export default {
   },
   methods: {
     async loadPerson () {
-      await this.$store.dispatch('people/loadInstance', this.$route.params.id)
+      await this.$store.dispatch('people/loadInstance', this.id)
+      await this.$store.dispatch('relatedTo/loadForPerson', this.id)
+      await this.$store.dispatch('properties/loadForPerson', this.id)
+      await this.$store.dispatch('note/loadForPerson', this.id)
     },
     async addProperty () {
       // set person of new property
-      this.$store.commit('properties/setPerson', this.$route.params.id)
+      this.$store.commit('properties/setPerson', this.id)
 
       // store property
       await this.$store.dispatch('properties/store')
@@ -173,7 +189,7 @@ export default {
     },
     async addRelation () {
       // set person of new relation
-      this.$store.commit('relatedTo/setFirst', this.$route.params.id)
+      this.$store.commit('relatedTo/setFirst', this.id)
 
       // store relation
       await this.$store.dispatch('relatedTo/store')
@@ -182,7 +198,7 @@ export default {
     },
     async addNote () {
       // set person of new note
-      this.$store.commit('note/setPerson', this.$route.params.id)
+      this.$store.commit('note/setPerson', this.id)
 
       // store note
       await this.$store.dispatch('note/store')

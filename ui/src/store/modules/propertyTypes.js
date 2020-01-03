@@ -16,7 +16,7 @@ export default {
     setNewName (state, name) { state.new.name = name },
     setNewDataType (state, id) { state.new.propertyDataTypeId = id },
     setNewCategory (state, id) { state.new.propertyCategoryId = id },
-    resetNew (state) {
+    resetActive (state) {
       state.new.name = ''
       state.new.propertyDataTypeId = 0
       state.new.propertyCategoryId = 0
@@ -48,7 +48,7 @@ export default {
         commit('addPropertyType', data)
 
         // reset new
-        commit('resetNew')
+        commit('resetActive')
 
         // resolve
         resolve(data)

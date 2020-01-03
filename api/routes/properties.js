@@ -39,6 +39,23 @@ properties.put('/:id', async (req, res, next) => {
   res.json({ id, ...updateObject })
 })
 
+properties.get('/by-person/:personId', async (req, res, next) => {
+  const personId = req.params.personId
+  if (!personId) return next(new Error('no personId set'))
+
+  // get properties in which the specified person occurs
+  const result = await knex('relatedTo').where('firstPersonId', personId)
+  res.json(result)
+})
+
+properties.get('/:id', async (req, res, next) => {
+  const id = req.params.id
+  if (!id) return next(new Error('no id set'))
+
+  // get property from database and return it
+  const result = await knex('hasProperty').where('id', id).first()
+  res.json(result)
+})
 /**
  * DELETE /:id: delete property with id
  */
