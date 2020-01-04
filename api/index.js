@@ -40,6 +40,12 @@ app.use('/notes', require('./routes/notes'))
 // -- diary
 app.use('/diary', require('./routes/diary'))
 
+// -- views
+app.use('/views', require('./routes/views'))
+
+// -- components
+app.use('/components', require('./routes/components'))
+
 // error handling
 app.use(function (err, req, res, next) {
   console.error(err.stack)

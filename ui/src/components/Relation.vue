@@ -11,12 +11,12 @@
     <!-- content -->
     <router-link :to="`/person/${relatedPerson.id}`">
       {{ relatedPerson.lastName }}, {{ relatedPerson.firstName }}
-    </router-link>: {{ relationName }} <br>
+    </router-link>: {{ relation.relationType.name }} <br>
     <p
-      v-if="relation.relationValue !== ''"
+      v-if="relation.value !== ''"
       class="text-sm mb-0 italic"
     >
-      {{ relation.relationValue }}
+      {{ relation.value }}
     </p>
 
     <!-- modal and backdrop -->
@@ -29,7 +29,7 @@
       </header>
       <section>
         <p>
-          Are you sure you want to remove the relation {{ relationName }}?
+          Are you sure you want to remove the relation {{ relation.relationType.name }}?
         </p>
       </section>
       <div class="actions flex justify-between">
@@ -60,23 +60,52 @@ export default {
     relationId: {
       type: Number,
       required: true
+    },
+    personId: {
+      type: Number,
+      required: true
     }
   },
   data: () => ({
+    relation: {
+      id: 0,
+      value: '',
+      firstPerson: {
+        id: 0,
+        firstName: '',
+        lastName: ''
+      },
+      secondPerson: {
+        id: 0,
+        firstName: '',
+        lastName: ''
+      },
+      relationType: {
+        name: '',
+        isBidirectional: false,
+        reverseName: '',
+        category: ''
+      }
+    },
     showModal: false
   }),
   computed: {
-    relation () {
-      return this.$store.getters['relatedTo/byId'](this.relationId)
+    relatedPerson () {
+      if (this.personId === this.relation.firstPerson.id) return this.relation.secondPerson
+      else return this.relation.firstPerson
     }
   },
   async beforeMount () {
-    await this.$store.dispatch('relatedTo/get', this.relationId)
+    const { data } = await this.axios.get(`components/relation/${this.relationId}`)
+    console.log('loaded relation: ', data)
+    this.relation = data
   },
   methods: {
     async remove () {
-      console.log('removing relation: ', this.relation)
-      await this.$store.dispatch('relatedTo/remove', this.relation.id)
+      // remote
+      await this.axios.delete(`relations/${this.relationId}`)
+      // local
+      this.$emit('remove')
     }
   }
 }

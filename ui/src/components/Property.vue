@@ -65,12 +65,24 @@ export default {
     }
   },
   data: () => ({
+    property: {
+      name: '',
+      type: '',
+      value: ''
+    },
     showModal: false
   }),
+  async beforeMount () {
+    const { data } = await this.axios.get(`components/property/${this.propertyId}`)
+    console.log('loaded property: ', data)
+    this.property = data
+  },
   methods: {
     async remove () {
-      console.log('removing property: ', this.property.id)
-      await this.$store.dispatch('properties/remove', this.property.id)
+      // remote
+      await this.axios.delete(`properties/${this.propertyId}`)
+      // local
+      this.$emit('remove')
     }
   }
 }

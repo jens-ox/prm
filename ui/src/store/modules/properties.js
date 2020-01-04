@@ -37,27 +37,6 @@ export default {
       commit('add', data)
       commit('resetActive')
       return data
-    },
-    async get ({ commit, getters }, id) {
-      const property = getters.byId(id)
-      if (property) return property
-
-      // load if unavailable, push to state and return
-      const { data } = await Vue.axios.get(`properties/${id}`)
-      commit('add', data)
-      return data
-    },
-    async loadForPerson ({ commit }, personId) {
-      const { data } = await Vue.axios.get(`relations/by-person/${personId}`)
-      data.forEach(d => commit('add', d))
-    },
-    async remove ({ commit }, id) {
-      const { data } = await Vue.axios.delete(`properties/${id}`)
-
-      // remove local
-      commit('people/removeActiveProperty', id, { root: true })
-
-      return data
     }
   }
 }

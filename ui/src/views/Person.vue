@@ -20,13 +20,14 @@
         <add-property @add="addProperty" />
       </div>
       <div
-        v-if="properties.length > 0"
+        v-if="person.properties.length > 0"
         class="flex flex-col max-w-xl mt-2"
       >
         <property
-          v-for="property in properties"
-          :key="`property-${property.id}`"
-          :property="property"
+          v-for="propertyId in person.properties"
+          :key="`property-${propertyId}`"
+          :property-id="propertyId"
+          @remove="removeProperty(propertyId)"
         />
       </div>
       <p
@@ -53,13 +54,15 @@
         <add-relation @add="addRelation" />
       </div>
       <div
-        v-if="relations.length > 0"
+        v-if="person.relations.length > 0"
         class="flex flex-col max-w-xl mt-2"
       >
         <relation
-          v-for="relation in relations"
-          :key="`relation-${relation.id}`"
-          :relation-id="relation.id"
+          v-for="relationId in person.relations"
+          :key="`relation-${relationId}`"
+          :relation-id="relationId"
+          :person-id="id"
+          @remove="removeRelation(relationId)"
         />
       </div>
       <p
@@ -86,13 +89,14 @@
         <add-note @add="addNote" />
       </div>
       <div
-        v-if="notes.length > 0"
+        v-if="person.notes.length > 0"
         class="flex flex-col max-w-xl mt-2"
       >
         <note
-          v-for="note in notes"
-          :key="`note-${note.id}`"
-          :note="note"
+          v-for="noteId in person.notes"
+          :key="`note-${noteId}`"
+          :note-id="noteId"
+          @remove="removeNote(noteId)"
         />
       </div>
       <p
@@ -108,11 +112,11 @@
       <h3>Diary Entries</h3>
     </header>
     <section class="max-w-xl">
-      <div v-if="diaries.length > 0">
+      <div v-if="person.diaries.length > 0">
         <diary-preview
-          v-for="diary in diaries"
-          :key="diary.id"
-          :entry="diary"
+          v-for="diaryId in person.diaries"
+          :key="diaryId"
+          :diary-id="diaryId"
         />
       </div>
       <p
@@ -125,8 +129,6 @@
   </div>
 </template>
 <script>
-import { mapState, mapGetters } from 'vuex'
-
 import AddProperty from '@/components/AddProperty.vue'
 import AddRelation from '@/components/AddRelation.vue'
 import AddNote from '@/components/AddNote.vue'
@@ -140,28 +142,19 @@ export default {
   data: () => ({
     addingProperty: false,
     addingRelation: false,
-    addingNote: false
+    addingNote: false,
+    person: {
+      id: 0,
+      firstName: '',
+      lastName: '',
+      properties: [],
+      relations: [],
+      notes: [],
+      diaries: []
+    }
   }),
   computed: {
-    id () { return this.$route.params.id },
-    ...mapState('people', {
-      person: state => state.active
-    }),
-    ...mapGetters({
-      getPerson: 'people/getPerson'
-    }),
-    relations () {
-      return this.$store.getters['relatedTo/byPersonId'](this.id)
-    },
-    properties () {
-      return this.$store.getters['properties/byPersonId'](this.id)
-    },
-    notes () {
-      return this.$store.getters['note/byPersonId'](this.id)
-    },
-    diaries () {
-      return this.$store.getters['diary/byPersonId'](this.id)
-    }
+    id () { return parseInt(this.$route.params.id) }
   },
   watch: {
     $route (to, from) {
@@ -173,37 +166,27 @@ export default {
   },
   methods: {
     async loadPerson () {
-      await this.$store.dispatch('people/loadInstance', this.id)
-      await this.$store.dispatch('relatedTo/loadForPerson', this.id)
-      await this.$store.dispatch('properties/loadForPerson', this.id)
-      await this.$store.dispatch('note/loadForPerson', this.id)
+      const { data } = await this.axios.get(`views/person/${this.id}`)
+      console.log('loaded person: ', data)
+      this.person = data
     },
-    async addProperty () {
-      // set person of new property
-      this.$store.commit('properties/setPerson', this.id)
 
-      // store property
-      await this.$store.dispatch('properties/store')
-
-      this.addingProperty = false
+    // properties
+    addProperty (id) { this.person.properties.push(id) },
+    removeProperty (id) {
+      this.person.properties = this.person.properties.filter(prop => prop.id !== id)
     },
-    async addRelation () {
-      // set person of new relation
-      this.$store.commit('relatedTo/setFirst', this.id)
 
-      // store relation
-      await this.$store.dispatch('relatedTo/store')
-
-      this.addingRelation = false
+    // relations
+    addRelation (id) { this.person.relations.push(id) },
+    removeRelation (id) {
+      this.person.relations = this.person.relations.filter(relation => relation.id !== id)
     },
-    async addNote () {
-      // set person of new note
-      this.$store.commit('note/setPerson', this.id)
 
-      // store note
-      await this.$store.dispatch('note/store')
-
-      this.addingNote = false
+    // notes
+    addNote (id) { this.person.notes.push(id) },
+    removeNote (id) {
+      this.person.notes = this.person.notes.filter(note => note.id !== id)
     }
   }
 }

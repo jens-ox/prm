@@ -145,13 +145,9 @@ module.exports = async () => {
 
   // string property data type
   const pdtString = await knex.select('id').from('propertyDataType').where('name', 'string')
-  let stringId
   if (pdtString.length === 0) {
     console.log('pdt: creating string')
-    const res = await knex('propertyDataType').insert({ name: 'string' })
-    stringId = res[0]
-  } else {
-    stringId = pdtString[0].id
+    await knex('propertyDataType').insert({ name: 'string' })
   }
 
   // date property data type
@@ -167,35 +163,23 @@ module.exports = async () => {
 
   // email property data type
   const pdtEmail = await knex.select('id').from('propertyDataType').where('name', 'email')
-  let emailId
   if (pdtEmail.length === 0) {
     console.log('pdt: creating email')
-    const res = await knex('propertyDataType').insert({ name: 'email' })
-    emailId = res[0]
-  } else {
-    emailId = pdtEmail[0].id
+    await knex('propertyDataType').insert({ name: 'email' })
   }
 
   // phone property data type
   const pdtPhone = await knex.select('id').from('propertyDataType').where('name', 'phone')
-  let phoneId
   if (pdtPhone.length === 0) {
     console.log('pdt: creating phone')
-    const res = await knex('propertyDataType').insert({ name: 'phone' })
-    phoneId = res[0]
-  } else {
-    phoneId = pdtPhone[0].id
+    await knex('propertyDataType').insert({ name: 'phone' })
   }
 
   // link property data type
   const pdtLink = await knex.select('id').from('propertyDataType').where('name', 'link')
-  let linkId
   if (pdtLink.length === 0) {
     console.log('pdt: creating link')
-    const res = await knex('propertyDataType').insert({ name: 'link' })
-    linkId = res[0]
-  } else {
-    linkId = pdtLink[0].id
+    await knex('propertyDataType').insert({ name: 'link' })
   }
 
   // general property category
