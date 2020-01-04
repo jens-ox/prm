@@ -87,24 +87,33 @@
 <script>
 export default {
   props: {
-    note: {
-      type: Object,
+    noteId: {
+      type: Number,
       required: true
     }
   },
   data: () => ({
     showModal: false,
-    showNote: false
+    showNote: false,
+    note: {
+      timestamp: 0,
+      text: ''
+    }
   }),
   computed: {
     modalVisible () {
       return this.showModal || this.showNote
     }
   },
+  async beforeMount () {
+    const { data } = await this.axios.get(`notes/${this.noteId}`)
+    console.log('loaded note: ', data)
+    this.note = data
+  },
   methods: {
     async remove () {
-      console.log('removing note: ', this.note.id)
-      await this.$store.dispatch('note/remove', this.note.id)
+      console.log('removing note: ', this.noteId)
+      await this.$store.dispatch('note/remove', this.noteId)
     },
     async update () {
       console.log('updating note: ', this.note)
