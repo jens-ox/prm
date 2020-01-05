@@ -35,6 +35,21 @@ relations.get('/:id', async (req, res, next) => {
   res.json(result)
 })
 
+relations.put('/:id', async (req, res, next) => {
+  const { value, firstPersonId, secondPersonId, relationTypeId } = req.body
+  const id = req.params.id
+
+  const updateObject = {}
+  if (value) updateObject.value = value
+  if (firstPersonId) updateObject.firstPersonId = firstPersonId
+  if (secondPersonId) updateObject.secondPersonId = secondPersonId
+  if (relationTypeId) updateObject.relationTypeId = relationTypeId
+
+  await knex('relatedTo').where('id', id).update(updateObject)
+
+  res.json({ id, ...updateObject })
+})
+
 /**
  * DELETE /:id: delete relation with id
  */

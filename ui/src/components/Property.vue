@@ -64,7 +64,7 @@
       <section>
         <add-property
           :property="property"
-          @update="showProperty = false"
+          @update="update"
         />
       </section>
       <div class="actions flex justify-between">
@@ -103,11 +103,14 @@ export default {
     showProperty: false
   }),
   async beforeMount () {
-    const { data } = await this.axios.get(`components/property/${this.propertyId}`)
-    console.log('loaded property: ', data)
-    this.property = data
+    await this.load()
   },
   methods: {
+    async load () {
+      const { data } = await this.axios.get(`components/property/${this.propertyId}`)
+      console.log('loaded property: ', data)
+      this.property = data
+    },
     async remove () {
       // remote
       await this.axios.delete(`properties/${this.propertyId}`)
@@ -119,8 +122,8 @@ export default {
       this.$success(`Removed property ${this.property.name}`)
     },
     async update () {
-      await this.axios.put(`properties/${this.propertyId}`, this.property)
-      this.$success('Updated property')
+      this.showProperty = false
+      await this.load()
     }
   }
 }

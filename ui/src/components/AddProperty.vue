@@ -137,11 +137,11 @@ export default {
     },
     async save () {
       // check if updating
-      if (this.newProperty.id && this.newProperty.id !== 0) {
+      if (this.newProperty.id) {
         await this.axios.put(`properties/${this.newProperty.id}`, this.newProperty)
 
         // emit to update local
-        this.$emit('update', this.newProperty.id)
+        this.$emit('update', this.newProperty)
 
         // notify user
         this.$success(`Updated property ${this.selectedPropertyType.name}`)

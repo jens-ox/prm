@@ -1,5 +1,8 @@
 <template>
-  <div class="card">
+  <div
+    class="card cursor-pointer"
+    @click.stop="showRelation = true"
+  >
     <!-- delete button -->
     <button
       class="icon absolute top-0 right-0 mr-2 mt-1 text-sm bg-transparent"
@@ -47,15 +50,42 @@
         </button>
       </div>
     </div>
+
+    <!-- view and edit relation modal -->
     <div
-      v-if="showModal"
+      v-show="showRelation"
+      class="modal cursor-default"
+    >
+      <header>
+        <h3>Relation</h3>
+      </header>
+      <section>
+        <add-relation
+          :relation="databaseRelation"
+          @update="update"
+        />
+      </section>
+      <div class="actions flex justify-between">
+        <button
+          class="large"
+          @click.stop="showRelation = false"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+    <div
+      v-if="showModal || showRelation"
       class="backdrop"
-      @click="showModal = false"
+      @click.stop="showModal = false; showRelation = false"
     />
   </div>
 </template>
 <script>
+import AddRelation from './AddRelation'
+
 export default {
+  components: { AddRelation },
   props: {
     relationId: {
       type: Number,
@@ -81,26 +111,44 @@ export default {
         lastName: ''
       },
       relationType: {
+        id: 0,
         name: '',
         isBidirectional: false,
         reverseName: '',
         category: ''
       }
     },
-    showModal: false
+    showModal: false,
+    showRelation: false
   }),
   computed: {
     relatedPerson () {
       if (this.personId === this.relation.firstPerson.id) return this.relation.secondPerson
       else return this.relation.firstPerson
+    },
+    databaseRelation () {
+      return {
+        id: this.relation.id,
+        firstPersonId: this.relation.firstPerson.id,
+        secondPersonId: this.relation.secondPerson.id,
+        value: this.relation.value,
+        relationTypeId: this.relation.relationType.id
+      }
     }
   },
   async beforeMount () {
-    const { data } = await this.axios.get(`components/relation/${this.relationId}`)
-    console.log('loaded relation: ', data)
-    this.relation = data
+    await this.load()
   },
   methods: {
+    async load () {
+      const { data } = await this.axios.get(`components/relation/${this.relationId}`)
+      console.log('loaded relation: ', data)
+      this.relation = data
+    },
+    async update () {
+      this.showRelation = false
+      await this.load()
+    },
     async remove () {
       // remote
       await this.axios.delete(`relations/${this.relationId}`)

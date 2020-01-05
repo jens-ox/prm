@@ -112,7 +112,11 @@ export default {
   props: {
     personId: {
       type: Number,
-      required: true
+      default: null
+    },
+    relation: {
+      type: Object,
+      default: null
     }
   },
   data: () => ({
@@ -139,6 +143,9 @@ export default {
     selectedRelationType () {
       return this.relationTypes.find(rType => rType.id === this.newRelation.relationTypeId)
     },
+    selectedPerson () {
+      return this.people.find(person => person.id === this.newRelation.secondPersonId)
+    },
     filteredPeople () {
       return this.searchPersonName === ''
         ? this.people
@@ -161,9 +168,6 @@ export default {
     }
   },
   async beforeMount () {
-    // pre-set first person
-    this.newRelation.firstPersonId = this.personId
-
     // load data
     const { data: relationTypes } = await this.axios.get('components/add-relation/relation-types')
     const { data: people } = await this.axios.get('people')
@@ -179,6 +183,13 @@ export default {
     this.peopleSearch = new Fuse(this.people, {
       keys: ['firstName', 'lastName']
     })
+
+    // pre-set relation if updating -- else, only set personId
+    if (this.relation) {
+      this.newRelation = this.relation
+      this.searchRelationType = this.selectedRelationType.name
+      this.searchPersonName = `${this.selectedPerson.lastName}, ${this.selectedPerson.firstName}`
+    } else this.newRelation.firstPersonId = this.personId
   },
   methods: {
     setPerson (person) {
@@ -201,14 +212,24 @@ export default {
       this.searchingRelationType = false
     },
     async save () {
-      // add remote
-      const { data } = await this.axios.post('relations', this.newRelation)
+      // check if updating
+      if (this.newRelation.id) {
+        await this.axios.put(`relations/${this.newRelation.id}`, this.newRelation)
 
-      // emit to add local
-      this.$emit('add', data.id)
+        // emit to update local
+        this.$emit('update', this.newRelation)
 
-      // notify user
-      this.$success(`Added relation ${this.selectedRelationType.name}`)
+        // notify user
+        this.$success(`Updated relation ${this.selectedRelationType.name}`)
+      } else {
+        const { data } = await this.axios.post('relations', this.newRelation)
+
+        // emit to add local
+        this.$emit('add', data.id)
+
+        // notify user
+        this.$success(`Added relation ${this.selectedRelationType.name}`)
+      }
     }
   }
 }
