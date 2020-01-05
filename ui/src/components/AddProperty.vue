@@ -113,28 +113,17 @@ export default {
   },
   methods: {
     setPropertyType (type) {
-      // select property type
       this.newProperty.propertyTypeId = type.id
-
-      // set search text for user to property type
       this.searchPropertyType = type.name
-
-      // close search
       this.searchingPropertyType = false
     },
     createNewPropertyType () {
-      console.log('creating new property type')
-      this.searchingPropertyType = false
-      this.$router.push(`/add-property?name=${this.searchPropertyType}`)
+      this.$router.push(`/add-property?name=${this.searchPropertyType}&personId=${this.personId}`)
     },
     blurSearchPropertyType () {
       this.searchingPropertyType = false
     },
     async save () {
-      // close search
-      this.searchingPropertyType = false
-      this.searchPropertyType = ''
-
       // add remote
       const { data } = await this.axios.post(`properties`, this.newProperty)
 

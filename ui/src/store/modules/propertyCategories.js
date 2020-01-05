@@ -31,24 +31,6 @@ export default {
         commit('setPropertyCategories', result.data)
         resolve()
       })
-    },
-    async store ({ state, commit }) {
-      return new Promise(async resolve => {
-        // store remove
-        console.log('storing property category: ', state.new)
-        const { data } = await Vue.axios.post('/property-categories', state.new)
-
-        console.log('new prop category: ', data)
-
-        // store local
-        commit('addPropertyCategory', data)
-
-        // reset new
-        commit('resetActive')
-
-        // resolve
-        resolve(data)
-      })
     }
   }
 }

@@ -1,16 +1,17 @@
 <template>
   <div>
-    <h1 class="header">
+    <h1 class="mb-4">
       Add Property
     </h1>
-    <div class="fields">
+    <div class="max-w-lg">
       <div class="field">
         <label for="property-name">Property Name</label>
         <input
           id="property-name"
-          v-model="propertyName"
+          v-model="newPropertyType.name"
           type="text"
           placeholder="Property Name"
+          class="w-full"
         >
       </div>
       <div
@@ -23,6 +24,7 @@
           v-model="searchPropertyDataType"
           type="text"
           placeholder="Data Type"
+          class="w-full"
           @focus="searchingPropertyDataType = true"
         >
         <ul
@@ -33,7 +35,7 @@
           <li
             v-for="dataType in filteredPropertyDataTypes"
             :key="`propertyDataType-${dataType.id}`"
-            @click="setPropertyDataType(dataType)"
+            @click="setPropertyDataType(dataType.id)"
           >
             {{ dataType.name }}
           </li>
@@ -49,6 +51,7 @@
           v-model="searchPropertyCategory"
           type="text"
           placeholder="Property Category"
+          class="w-full"
           @focus="searchingPropertyCategory = true"
         >
         <ul
@@ -59,7 +62,7 @@
           <li
             v-for="category in filteredPropertyCategories"
             :key="`propertyCategory-${category.id}`"
-            @click="setPropertyCategory(category)"
+            @click="setPropertyCategory(category.id)"
           >
             {{ category.name }}
           </li>
@@ -86,13 +89,16 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
 import Fuse from 'fuse.js'
 import { directive as OnClickaway } from 'vue-clickaway'
 
 export default {
   directives: { OnClickaway },
   data: () => ({
+    personId: 0,
+    propertyDataTypes: [],
+    propertyCategories: [],
+    propertyTypes: [],
     searchingPropertyDataType: false,
     searchingPropertyCategory: false,
     searchPropertyDataType: '',
@@ -102,103 +108,106 @@ export default {
     },
     propertyCategorySearch: {
       search: () => []
+    },
+    newPropertyType: {
+      name: '',
+      propertyCategoryId: 0,
+      propertyDataTypeId: 0
     }
   }),
   computed: {
-    ...mapState('propertyDataTypes', {
-      availablePropertyDataTypes: state => state.available
-    }),
-    ...mapState('propertyCategories', {
-      availablePropertyCategories: state => state.available
-    }),
-    ...mapState('propertyTypes', {
-      newProperty: state => state.new
-    }),
-    propertyName: {
-      get () { return this.$store.state.propertyTypes.new.name },
-      set (name) { this.$store.commit('propertyTypes/setNewName', name) }
-    },
+    selectedCategory () { return this.propertyCategories.find(cat => cat.id === this.newPropertyType.propertyCategoryId) },
+    selectedDataType () { return this.propertyDataTypes.find(dt => dt.id === this.newPropertyType.propertyDataTypeId) },
     filteredPropertyDataTypes () {
       return this.searchPropertyDataType === ''
-        ? this.availablePropertyDataTypes
+        ? this.propertyDataTypes
         : this.propertyDataTypeSearch.search(this.searchPropertyDataType)
     },
     filteredPropertyCategories () {
       return this.searchPropertyCategory === ''
-        ? this.availablePropertyCategories
+        ? this.propertyCategories
         : this.propertyCategorySearch.search(this.searchPropertyCategory)
     },
     categoryExists () {
       if (this.searchPropertyCategory === '') return true
-      return this.availablePropertyCategories.map(propertyCategory => propertyCategory.name).includes(this.searchingPropertyCategory)
+      return this.propertyCategories.map(propertyCategory => propertyCategory.name).includes(this.searchingPropertyCategory)
     },
     saveable () {
-      return this.newProperty.name !== '' &&
-        this.newProperty.propertyDataTypeId !== 0 &&
-        this.newProperty.propertyCategory !== 0
+      return this.newPropertyType.name !== '' &&
+        this.newPropertyType.propertyDataTypeId !== 0 &&
+        this.newPropertyType.propertyCategory !== 0
     }
   },
   async beforeMount () {
+    // pre-set name if available
+    if (this.$route.query.name) this.newPropertyType.name = this.$route.query.name
+
+    // pre-set person if possible
+    if (this.$route.query.personId) this.personId = this.$route.query.personId
+
     // set up data types
-    await this.$store.dispatch('propertyDataTypes/loadAvailable')
-    this.propertyDataTypeSearch = new Fuse(this.availablePropertyDataTypes, {
+    const { data: dataTypes } = await this.axios.get('property-data-types')
+    this.propertyDataTypes = dataTypes
+    this.propertyDataTypeSearch = new Fuse(this.propertyDataTypes, {
       keys: ['name']
     })
 
     // set up categories
-    await this.$store.dispatch('propertyCategories/loadAvailable')
-    this.propertyCategorySearch = new Fuse(this.availablePropertyCategories, {
+    const { data: categories } = await this.axios.get('property-categories')
+    this.propertyCategories = categories
+    this.propertyCategorySearch = new Fuse(this.propertyCategories, {
       keys: ['name']
     })
   },
   methods: {
     async createNewPropertyCategory () {
-      console.log('creating new property category')
       this.searchingPropertyCategory = false
-      this.$store.commit('propertyCategories/setNewName', this.searchPropertyCategory)
-      const categoryId = await this.$store.dispatch('propertyCategories/store')
-      console.log('new category id: ', categoryId)
 
-      // set category id
-      this.$store.commit('propertyTypes/setNewCategory', categoryId)
-    },
-    blurSearchPropertyDataType () {
-      this.searchingPropertyDataType = false
-    },
-    blurSearchPropertyCategory () {
-      this.searchingPropertyCategory = false
-    },
-    setPropertyDataType (dataType) {
-      console.log('selecting prop data type: ', dataType)
-      this.$store.commit('propertyTypes/setNewDataType', dataType.id)
+      // add remote
+      const { data } = this.axios.post('property-categories', { name: this.searchPropertyCategory })
 
-      // close search
+      // add local
+      this.propertyCategories.push(data)
+
+      // set active
+      this.newPropertyType.propertyCategoryId = data.id
+    },
+    blurSearchPropertyDataType () { this.searchingPropertyDataType = false },
+    blurSearchPropertyCategory () { this.searchingPropertyCategory = false },
+
+    setPropertyDataType (id) {
       this.searchingPropertyDataType = false
+      this.newPropertyType.propertyDataTypeId = id
 
       // for the user: fix text
-      this.searchPropertyDataType = dataType.name
+      this.searchPropertyDataType = this.selectedDataType.name
     },
-    setPropertyCategory (category) {
-      console.log('selecting prop data category: ', category)
-      this.$store.commit('propertyTypes/setNewCategory', category.id)
-
-      // close search
+    setPropertyCategory (id) {
       this.searchingPropertyCategory = false
+      this.newPropertyType.propertyCategoryId = id
 
       // for the user: fix text
-      this.searchPropertyCategory = category.name
+      this.searchPropertyCategory = this.selectedCategory.name
     },
     async storeProperty () {
       if (!this.saveable) return
-      await this.$store.dispatch('propertyTypes/store')
+
+      // add remote
+      await this.axios.post('property-types', this.newPropertyType)
 
       // return to active if possible
-      const id = this.$store.state.people.active.id
+      const id = this.$route.query.personId
       if (id !== 0) {
         this.$router.push(`/person/${id}`)
       } else {
         this.$router.push('/add-person')
       }
+
+      // dispatch notification
+      this.$notify({
+        type: 'success',
+        text: `Added property type ${this.newPropertyType.name}`
+      })
     }
   }
 }
