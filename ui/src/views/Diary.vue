@@ -17,7 +17,7 @@
         <diary-preview
           v-for="diary in availableEntries"
           :key="diary.id"
-          :entry="diary"
+          :diary-id="diary.id"
         />
       </div>
       <div v-else>

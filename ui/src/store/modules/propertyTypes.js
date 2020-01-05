@@ -27,16 +27,11 @@ export default {
   },
   actions: {
     async loadAvailable ({ state, commit }) {
-      console.log('loading available property types')
+      // only load if not loaded yet
+      if (state.available.length > 0) return
 
-      return new Promise(async resolve => {
-        // only load if not loaded yet
-        if (state.available.length > 0) return resolve()
-
-        const result = await Vue.axios.get('/property-types')
-        commit('setPropertyTypes', result.data)
-        resolve()
-      })
+      const { data } = await Vue.axios.get('/property-types')
+      commit('setPropertyTypes', data)
     },
 
     async store ({ state, commit }) {

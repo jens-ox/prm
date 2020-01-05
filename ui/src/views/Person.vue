@@ -17,7 +17,10 @@
         v-if="addingProperty"
         class="max-w-xl"
       >
-        <add-property @add="addProperty" />
+        <add-property
+          :person-id="id"
+          @add="addProperty"
+        />
       </div>
       <div
         v-if="person.properties.length > 0"
@@ -172,21 +175,26 @@ export default {
     },
 
     // properties
-    addProperty (id) { this.person.properties.push(id) },
+    addProperty (id) {
+      this.person.properties.push(id)
+      // close adding
+      this.addingProperty = false
+    },
     removeProperty (id) {
-      this.person.properties = this.person.properties.filter(prop => prop.id !== id)
+      console.log('removing prop ', id, ' from prop list ', this.person.properties)
+      this.person.properties = this.person.properties.filter(prop => prop !== id)
     },
 
     // relations
     addRelation (id) { this.person.relations.push(id) },
     removeRelation (id) {
-      this.person.relations = this.person.relations.filter(relation => relation.id !== id)
+      this.person.relations = this.person.relations.filter(relation => relation !== id)
     },
 
     // notes
     addNote (id) { this.person.notes.push(id) },
     removeNote (id) {
-      this.person.notes = this.person.notes.filter(note => note.id !== id)
+      this.person.notes = this.person.notes.filter(note => note !== id)
     }
   }
 }

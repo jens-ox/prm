@@ -42,95 +42,110 @@
     </div>
     <div class="field flex">
       <input
-        v-if="selectedPropertyType.dataType === 'date'"
-        v-model="propertyValue"
+        v-if="selectedPropertyType && selectedPropertyType.dataType === 'date'"
+        v-model="newProperty.value"
         type="date"
       >
       <input
         v-else
-        v-model="propertyValue"
+        v-model="newProperty.value"
         type="text"
         placeholder="Value"
       >
       <button
-        class="primary ml-4 px-4"
+        class="primary large ml-4"
         @click="save"
       >
-        <font-awesome-icon icon="save" />
+        Save
       </button>
     </div>
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
 import Fuse from 'fuse.js'
 import { directive as OnClickaway } from 'vue-clickaway'
 
 export default {
   directives: { OnClickaway },
+  props: {
+    personId: {
+      type: Number,
+      required: true
+    }
+  },
   data: () => ({
+    propertyTypes: [],
     searchingPropertyType: false,
     searchPropertyType: '',
-    selectedPropertyType: {
-      dataType: ''
+    newProperty: {
+      value: '',
+      personId: 0,
+      propertyTypeId: 0
     },
     propertyTypeSearch: {
       search: () => []
     }
   }),
   computed: {
-    ...mapState('propertyTypes', {
-      availablePropertyTypes: state => state.available
-    }),
-    propertyValue: {
-      get () { return this.$store.state.properties.new.value },
-      set (value) { this.$store.commit('properties/setValue', value) }
+    selectedPropertyType () {
+      return this.propertyTypes.find(pType => pType.id === this.newProperty.propertyTypeId)
     },
     filteredPropertyTypes () {
       return this.searchPropertyType === ''
-        ? this.availablePropertyTypes
+        ? this.propertyTypes
         : this.propertyTypeSearch.search(this.searchPropertyType)
     },
     propertyExists () {
       if (this.searchPropertyType === '') return true
-      return this.availablePropertyTypes.map(propertyType => propertyType.name).includes(this.searchPropertyType)
+      return this.propertyTypes.map(propertyType => propertyType.name).includes(this.searchPropertyType)
     },
     noPropertyYet () {
-      return this.availablePropertyTypes.length === 0 && this.searchPropertyType === ''
+      return this.propertyTypes.length === 0 && this.searchPropertyType === ''
     }
   },
   async beforeMount () {
-    await this.$store.dispatch('propertyTypes/loadAvailable')
-    this.propertyTypeSearch = new Fuse(this.availablePropertyTypes, {
+    const { data } = await this.axios.get('/components/add-property/property-types')
+    this.propertyTypes = data
+    this.propertyTypeSearch = new Fuse(this.propertyTypes, {
       keys: ['name']
     })
+    this.newProperty.personId = this.personId
   },
   methods: {
+    setPropertyType (type) {
+      // select property type
+      this.newProperty.propertyTypeId = type.id
+
+      // set search text for user to property type
+      this.searchPropertyType = type.name
+
+      // close search
+      this.searchingPropertyType = false
+    },
     createNewPropertyType () {
       console.log('creating new property type')
       this.searchingPropertyType = false
-      this.$store.commit('propertyTypes/setNewName', this.searchPropertyType)
-      this.$router.push('/add-property')
+      this.$router.push(`/add-property?name=${this.searchPropertyType}`)
     },
     blurSearchPropertyType () {
       this.searchingPropertyType = false
     },
-    setPropertyType (type) {
-      console.log('selecting prop type: ', type)
-      this.$store.commit('properties/setPropertyType', type.id)
-      this.selectedPropertyType = type
-
+    async save () {
       // close search
       this.searchingPropertyType = false
-
-      // for the user: fix text
-      this.searchPropertyType = type.name
-    },
-    save () {
-      this.searchingPropertyType = false
       this.searchPropertyType = ''
-      this.selectedPropertyType.dataType = ''
-      this.$emit('add')
+
+      // add remote
+      const { data } = await this.axios.post(`properties`, this.newProperty)
+
+      // emit to add local
+      this.$emit('add', data.id)
+
+      // notify user
+      this.$notify({
+        type: 'success',
+        text: `Added property ${this.selectedPropertyType.name}`
+      })
     }
   }
 }

@@ -82,7 +82,14 @@ export default {
       // remote
       await this.axios.delete(`properties/${this.propertyId}`)
       // local
-      this.$emit('remove')
+      this.$emit('remove', this.propertyId)
+      // close modal
+      this.showModal = false
+      // notify user
+      this.$notify({
+        type: 'success',
+        text: `Removed property ${this.property.name}`
+      })
     }
   }
 }

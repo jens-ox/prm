@@ -1,5 +1,3 @@
-import Vue from 'vue'
-
 export default {
   namespaced: true,
   state: {
@@ -29,14 +27,5 @@ export default {
   getters: {
     byId: state => id => state.available.find(d => d.id === id),
     byPersonId: state => personId => state.available.filter(d => d.personId === personId)
-  },
-  actions: {
-    async store ({ state, commit }) {
-      const { id, ...newProperty } = state.active
-      const { data } = await Vue.axios.post('/properties', newProperty)
-      commit('add', data)
-      commit('resetActive')
-      return data
-    }
   }
 }
