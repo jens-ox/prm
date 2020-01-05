@@ -91,7 +91,7 @@ export default {
           new Heading({ levels: [1, 2, 3] }),
           new Mention({
             // a list of all suggested items
-            items: () => this.availablePeople,
+            items: () => this.people,
             // is called when a suggestion starts
             onEnter: ({
               items, query, range, decorationNode, command
