@@ -87,6 +87,9 @@
         >
         <button
           class="primary large ml-4"
+          :class="{
+            disabled: newRelation.relationTypeId === 0 || newRelation.secondPersonId === 0
+          }"
           @click="save"
         >
           Save

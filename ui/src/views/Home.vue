@@ -4,7 +4,7 @@
       <h1>People</h1>
       <div class="line" />
       <input
-        v-if="availablePeople.length > 0"
+        v-if="people.length > 0"
         v-model="searchPeople"
         type="text"
         placeholder="Find someone"
@@ -17,7 +17,7 @@
 
     <!-- content -->
     <ul
-      v-if="availablePeople.length > 0"
+      v-if="filteredPeople.length > 0"
       class="list-people"
     >
       <li
@@ -30,42 +30,47 @@
       </li>
     </ul>
     <p
-      v-else
+      v-else-if="people.length === 0"
       class="italic"
     >
       No people available. <router-link to="/add-person">
         Add someone!
       </router-link>
     </p>
+    <p
+      v-else
+      class="italic"
+    >
+      Nobody found with that name.
+    </p>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import Fuse from 'fuse.js'
 
 export default {
   name: 'Home',
   data: () => ({
+    people: [],
     searchPeople: '',
     peopleSearch: {
       search: () => []
     }
   }),
   computed: {
-    ...mapState('people', {
-      availablePeople: state => state.available
-    }),
     filteredPeople () {
       return this.searchPeople === ''
-        ? this.availablePeople
+        ? this.people
         : this.peopleSearch.search(this.searchPeople)
     }
   },
   async beforeMount () {
-    // load available
-    await this.$store.dispatch('people/loadAvailable')
-    this.peopleSearch = new Fuse(this.availablePeople, {
+    const { data: people } = await this.axios.get('people')
+    this.people = people
+
+    // set up search
+    this.peopleSearch = new Fuse(this.people, {
       keys: ['firstName', 'lastName']
     })
   }

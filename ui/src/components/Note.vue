@@ -96,6 +96,7 @@ export default {
     showModal: false,
     showNote: false,
     note: {
+      id: 0,
       timestamp: 0,
       text: ''
     }
@@ -112,15 +113,21 @@ export default {
   },
   methods: {
     async remove () {
-      console.log('removing note: ', this.noteId)
-      await this.$store.dispatch('note/remove', this.noteId)
+      // remote
+      await this.axios.delete(`notes/${this.noteId}`)
+      // local
+      this.$emit('remove', this.noteId)
+      // close modal
+      this.showModal = false
+      // notify user
+      this.$success('Removed note')
     },
     async update () {
-      console.log('updating note: ', this.note)
-      await this.$store.dispatch('note/update', this.note)
+      // remote
+      await this.axios.put(`notes/${this.noteId}`, this.note)
 
-      // hide popup
-      this.showNote = false
+      // notify user
+      this.$success('Updated note')
     },
     closeModal () {
       this.showModal = false

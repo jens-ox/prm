@@ -7,7 +7,6 @@ import { faPlus, faSave, faArrowsAltH, faAlignJustify, faTrashAlt, faTimes, faBo
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import App from './App.vue'
 import router from './router'
-import store from '@/store'
 import './registerServiceWorker'
 
 import './assets/style/main.sass'
@@ -48,6 +47,5 @@ Vue.prototype.$error = text => Vue.notify({
 
 new Vue({
   router,
-  store,
   render: h => h(App)
 }).$mount('#app')

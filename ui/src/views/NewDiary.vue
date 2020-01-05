@@ -5,7 +5,7 @@
       <label for="date">Date:</label>
       <input
         id="date"
-        v-model="date"
+        v-model="newEntry.date"
         type="date"
         placeholder="Enter a date"
         class="text-lg border-0 border-b w-full rounded-none"
@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import Fuse from 'fuse.js'
 import tippy, { roundArrow } from 'tippy.js'
 import 'tippy.js/dist/tippy.css'
@@ -74,6 +73,18 @@ export default {
   components: { EditorContent },
   data () {
     return {
+      newEntry: {
+        id: 0,
+        text: '',
+        date: ''
+      },
+      people: [],
+      query: null,
+      suggestionRange: null,
+      filteredUsers: [],
+      navigatedUserIndex: 0,
+      insertMention: () => {},
+      observer: null,
       editor: new Editor({
         extensions: [
           new HardBreak(),
@@ -155,82 +166,40 @@ export default {
           new Italic()
         ],
         onUpdate: ({ getJSON }) => {
-          this.text = getJSON()
+          this.newEntry.text = getJSON()
         }
-      }),
-      query: null,
-      suggestionRange: null,
-      filteredUsers: [],
-      navigatedUserIndex: 0,
-      insertMention: () => {},
-      observer: null
+      })
     }
   },
 
   computed: {
-    ...mapState('people', {
-      availablePeople: state => state.available
-    }),
-    date: {
-      get () { return this.$store.state.diary.active.date },
-      set (date) { this.$store.commit('diary/setActive', { date }) }
-    },
-    text: {
-      get () { return this.$store.state.diary.active.text },
-      set (text) { this.$store.commit('diary/setActive', { text }) }
-    },
     hasResults () { return this.filteredUsers.length },
     showSuggestions () { return this.query || this.hasResults },
     diaryId () { return this.$route.params.id }
   },
   async beforeMount () {
-    await this.$store.dispatch('people/loadAvailable')
+    const { data: people } = await this.axios.get('people')
+    this.people = people
 
     // check if content is pre-set
     if (this.diaryId) {
-      console.log('pre-loading content')
       // load content
-      await this.$store.dispatch('diary/loadInstance', this.diaryId)
+      const { data: entry } = await this.axios.get(`diary/${this.diaryId}`)
+      console.log('pre-loaded entry: ', entry)
+      this.newEntry = entry
 
-      // set content
-      console.log('setting content to:', this.text)
-      this.editor.setContent(this.text)
+      // pre-set content
+      this.editor.setContent(JSON.parse(this.newEntry.text))
     }
   },
 
   methods: {
     async save () {
-      console.log('saving new diary entry: ', {
-        id: this.diaryId,
-        date: this.date,
-        text: this.text
-      })
-
       // case 1: new entry
-      if (!this.diaryId) {
-        // store remote
-        const { data } = await this.axios.post('/diary', {
-          date: this.date,
-          text: this.text
-        })
-
-        // store local
-        this.$store.commit('diary/addAvailable', data)
+      if (!this.diaryId) await this.axios.post('/diary', this.newEntry)
 
       // case 2: update existing entry
-      } else {
-        await this.axios.put(`/diary/${this.diaryId}`, {
-          date: this.date,
-          text: this.text
-        })
-
-        // update local
-        this.$store.commit('diary/update', {
-          id: this.diaryId,
-          date: this.date,
-          text: this.text
-        })
-      }
+      else await this.axios.put(`/diary/${this.diaryId}`, this.newEntry)
 
       this.$success('Successfully stored diary entry.')
     },

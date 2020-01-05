@@ -13,9 +13,9 @@
 
     <!-- diary entries -->
     <section class="max-w-xl">
-      <div v-if="availableEntries.length > 0">
+      <div v-if="entries.length > 0">
         <diary-preview
-          v-for="diary in availableEntries"
+          v-for="diary in entries"
           :key="diary.id"
           :diary-id="diary.id"
         />
@@ -31,16 +31,14 @@
 <script>
 import DiaryPreview from '../components/DiaryPreview'
 
-import { mapState } from 'vuex'
 export default {
   components: { DiaryPreview },
-  computed: {
-    ...mapState('diary', {
-      availableEntries: state => state.available
-    })
-  },
+  data: () => ({
+    entries: []
+  }),
   async beforeMount () {
-    await this.$store.dispatch('diary/loadAvailable')
+    const { data: entries } = await this.axios.get('diary')
+    this.entries = entries
   }
 }
 </script>

@@ -54,6 +54,9 @@
       >
       <button
         class="primary large ml-4"
+        :class="{
+          disabled: newProperty.propertyTypeId === 0
+        }"
         @click="save"
       >
         Save
