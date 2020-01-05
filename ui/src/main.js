@@ -15,6 +15,19 @@ import './assets/style/main.sass'
 // set axios base url
 axios.defaults.baseURL = 'http://localhost:3000'
 
+// axios error handling
+axios.interceptors.response.use(
+  function (response) { return response },
+  function (error) {
+    // handle error
+    if (error.response) {
+      Vue.$notify({
+        type: 'error',
+        text: error.response.data.message
+      })
+    }
+  })
+
 Vue.use(VueAxios, axios)
 Vue.use(Notifications)
 library.add(faPlus, faSave, faArrowsAltH, faAlignJustify, faTrashAlt, faTimes, faBold, faItalic, faStrikethrough, faUnderline, faCode, faParagraph, faListUl, faListOl, faQuoteLeft, faUndo, faRedo)
