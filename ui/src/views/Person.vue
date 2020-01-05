@@ -89,7 +89,10 @@
         v-if="addingNote"
         class="max-w-xl"
       >
-        <add-note @add="addNote" />
+        <add-note
+          :person-id="id"
+          @add="addNote"
+        />
       </div>
       <div
         v-if="person.notes.length > 0"
@@ -186,13 +189,19 @@ export default {
     },
 
     // relations
-    addRelation (id) { this.person.relations.push(id) },
+    addRelation (id) {
+      this.person.relations.push(id)
+      this.addingRelation = false
+    },
     removeRelation (id) {
       this.person.relations = this.person.relations.filter(relation => relation !== id)
     },
 
     // notes
-    addNote (id) { this.person.notes.push(id) },
+    addNote (id) {
+      this.person.notes.push(id)
+      this.addingNote = false
+    },
     removeNote (id) {
       this.person.notes = this.person.notes.filter(note => note !== id)
     }

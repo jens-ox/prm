@@ -2,7 +2,7 @@
   <div>
     <div class="fields">
       <textarea
-        v-model="text"
+        v-model="newNote.text"
         placeholder="Note"
         class="w-full h-32 mx-0"
       />
@@ -26,22 +26,41 @@
 </template>
 <script>
 export default {
-  data: () => ({
-    time: ''
-  }),
-  computed: {
-    text: {
-      get () { return this.$store.state.note.new.text },
-      set (text) { this.$store.commit('note/setText', text) }
+  props: {
+    personId: {
+      type: Number,
+      required: true
     }
   },
+  data: () => ({
+    time: '',
+    newNote: {
+      text: '',
+      timestamp: '',
+      personId: ''
+    }
+  }),
+  beforeMount () {
+    // set person id
+    this.newNote.personId = this.personId
+  },
   methods: {
-    save () {
+    async save () {
       // set time if necessary
-      if (this.time !== '') this.$store.commit('note/setTimestamp', new Date(this.time).getTime())
+      if (this.time !== '') this.newNote.timestamp = new Date(this.time).getTime()
+      else this.newNote.timestamp = new Date().getTime()
+
+      // store
+      const { data } = await this.axios.post('notes', this.newNote)
 
       // emit
-      this.$emit('add')
+      this.$emit('add', data.id)
+
+      // notify user
+      this.$notify({
+        type: 'success',
+        text: 'Added note'
+      })
     }
   }
 }
