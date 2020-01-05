@@ -26,17 +26,6 @@ relations.post('/', async (req, res, next) => {
   res.json({ id, value, firstPersonId, secondPersonId, relationTypeId })
 })
 
-relations.get('/by-person/:personId', async (req, res, next) => {
-  const personId = req.params.personId
-  if (!personId) return next(new Error('no personId set'))
-
-  // get relations in which the specified person occurs
-  const result = await knex('relatedTo')
-    .where('firstPersonId', personId)
-    .orWhere('secondPersonId', personId)
-  res.json(result)
-})
-
 relations.get('/:id', async (req, res, next) => {
   const id = req.params.id
   if (!id) return next(new Error('no relation id set'))

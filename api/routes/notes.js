@@ -1,26 +1,6 @@
 const knex = require('../knex')
 const notes = require('express').Router()
 
-/**
- * GET /: get notes, limit 100
- *
- * Query params:
- * - offset: offset
- */
-notes.get('/by-person/:id', async (req, res, next) => {
-  const offset = req.query.offset || 0
-  const limit = 100
-
-  const result = await knex
-    .select('*')
-    .from('note')
-    .where('personId', req.params.id)
-    .orderBy('timestamp', 'desc')
-    .offset(offset)
-    .limit(limit)
-  res.json(result)
-})
-
 notes.get('/:id', async (req, res, next) => {
   const id = req.params.id
   if (!id) return next(new Error('no id set'))

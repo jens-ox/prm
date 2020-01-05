@@ -59,7 +59,7 @@
         }"
         @click="save"
       >
-        Save
+        {{ newProperty.id ? 'Update' : 'Save' }}
       </button>
     </div>
   </div>
@@ -73,7 +73,11 @@ export default {
   props: {
     personId: {
       type: Number,
-      required: true
+      default: null
+    },
+    property: {
+      type: Object,
+      default: null
     }
   },
   data: () => ({
@@ -112,7 +116,12 @@ export default {
     this.propertyTypeSearch = new Fuse(this.propertyTypes, {
       keys: ['name']
     })
-    this.newProperty.personId = this.personId
+
+    // pre-set property if updating -- else, only set personId
+    if (this.property) {
+      this.newProperty = this.property
+      this.searchPropertyType = this.selectedPropertyType.name
+    } else this.newProperty.personId = this.personId
   },
   methods: {
     setPropertyType (type) {
@@ -127,14 +136,25 @@ export default {
       this.searchingPropertyType = false
     },
     async save () {
-      // add remote
-      const { data } = await this.axios.post(`properties`, this.newProperty)
+      // check if updating
+      if (this.newProperty.id && this.newProperty.id !== 0) {
+        await this.axios.put(`properties/${this.newProperty.id}`, this.newProperty)
 
-      // emit to add local
-      this.$emit('add', data.id)
+        // emit to update local
+        this.$emit('update', this.newProperty.id)
 
-      // notify user
-      this.$success(`Added property ${this.selectedPropertyType.name}`)
+        // notify user
+        this.$success(`Updated property ${this.selectedPropertyType.name}`)
+      } else {
+        // add remote
+        const { data } = await this.axios.post(`properties`, this.newProperty)
+
+        // emit to add local
+        this.$emit('add', data.id)
+
+        // notify user
+        this.$success(`Added property ${this.selectedPropertyType.name}`)
+      }
     }
   }
 }

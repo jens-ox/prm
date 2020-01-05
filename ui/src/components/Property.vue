@@ -1,5 +1,8 @@
 <template>
-  <div class="card">
+  <div
+    class="card cursor-pointer"
+    @click="showProperty = true"
+  >
     <!-- delete button -->
     <button
       class="icon absolute top-0 right-0 mr-2 mt-1 text-sm bg-transparent"
@@ -49,15 +52,41 @@
         </button>
       </div>
     </div>
+
+    <!-- view and edit property modal -->
     <div
-      v-if="showModal"
+      v-show="showProperty"
+      class="modal cursor-default"
+    >
+      <header>
+        <h3>Property</h3>
+      </header>
+      <section>
+        <add-property
+          :property="property"
+          @update="showProperty = false"
+        />
+      </section>
+      <div class="actions flex justify-between">
+        <button
+          class="large"
+          @click.stop="showProperty = false"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+    <div
+      v-if="showModal || showProperty"
       class="backdrop"
-      @click="showModal = false"
+      @click.stop="showModal = false; showProperty = false"
     />
   </div>
 </template>
 <script>
+import AddProperty from './AddProperty'
 export default {
+  components: { AddProperty },
   props: {
     propertyId: {
       type: Number,
@@ -70,7 +99,8 @@ export default {
       type: '',
       value: ''
     },
-    showModal: false
+    showModal: false,
+    showProperty: false
   }),
   async beforeMount () {
     const { data } = await this.axios.get(`components/property/${this.propertyId}`)
@@ -87,6 +117,10 @@ export default {
       this.showModal = false
       // notify user
       this.$success(`Removed property ${this.property.name}`)
+    },
+    async update () {
+      await this.axios.put(`properties/${this.propertyId}`, this.property)
+      this.$success('Updated property')
     }
   }
 }
