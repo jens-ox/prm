@@ -49,5 +49,7 @@ app.use('/components', require('./routes/components'))
 // error handling
 app.use(function (err, req, res, next) {
   console.error(err.stack)
-  res.status(500).send('Something broke!')
+  res.status(500).json({
+    message: err.message
+  })
 })

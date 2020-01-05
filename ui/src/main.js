@@ -12,6 +12,8 @@ import './registerServiceWorker'
 
 import './assets/style/main.sass'
 
+Vue.use(Notifications)
+
 // set axios base url
 axios.defaults.baseURL = 'http://localhost:3000'
 
@@ -21,7 +23,7 @@ axios.interceptors.response.use(
   function (error) {
     // handle error
     if (error.response) {
-      Vue.$notify({
+      Vue.notify({
         type: 'error',
         text: error.response.data.message
       })
@@ -29,7 +31,6 @@ axios.interceptors.response.use(
   })
 
 Vue.use(VueAxios, axios)
-Vue.use(Notifications)
 library.add(faPlus, faSave, faArrowsAltH, faAlignJustify, faTrashAlt, faTimes, faBold, faItalic, faStrikethrough, faUnderline, faCode, faParagraph, faListUl, faListOl, faQuoteLeft, faUndo, faRedo)
 
 Vue.config.productionTip = false
