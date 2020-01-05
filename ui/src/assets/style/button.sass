@@ -17,6 +17,8 @@ button, .button
     @apply text-white bg-red-600
     &:hover
       @apply bg-red-700
+  &.disabled
+    @apply opacity-50 pointer-events-none cursor-default
 
 .bar-buttons
   >button

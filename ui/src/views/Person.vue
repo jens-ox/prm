@@ -54,7 +54,10 @@
         v-if="addingRelation"
         class="max-w-xl"
       >
-        <add-relation @add="addRelation" />
+        <add-relation
+          :person-id="id"
+          @add="addRelation"
+        />
       </div>
       <div
         v-if="person.relations.length > 0"

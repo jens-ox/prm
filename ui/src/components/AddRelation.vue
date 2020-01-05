@@ -1,5 +1,5 @@
 <template>
-  <div v-if="availablePeopleWithoutFocused.length > 0">
+  <div v-if="people.length > 0">
     <div class="fields">
       <!-- relation type -->
       <div
@@ -81,15 +81,15 @@
       <!-- extra info + save -->
       <div class="field flex">
         <input
-          v-model="additionalInfo"
+          v-model="newRelation.value"
           type="text"
           placeholder="Additional Info"
         >
         <button
-          class="primary ml-4 px-4"
+          class="primary large ml-4"
           @click="save"
         >
-          <font-awesome-icon icon="save" />
+          Save
         </button>
       </div>
     </div>
@@ -101,18 +101,30 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
 import Fuse from 'fuse.js'
 import { directive as OnClickaway } from 'vue-clickaway'
 
 export default {
   directives: { OnClickaway },
+  props: {
+    personId: {
+      type: Number,
+      required: true
+    }
+  },
   data: () => ({
+    newRelation: {
+      firstPersonId: 0,
+      secondPersonId: 0,
+      value: '',
+      relationTypeId: 0
+    },
+    relationTypes: [],
+    people: [],
     searchPersonName: '',
     searchingRelationType: false,
     searchingPersonName: false,
     searchRelationType: '',
-    selectedRelationType: {},
     relationTypeSearch: {
       search: () => []
     },
@@ -121,91 +133,82 @@ export default {
     }
   }),
   computed: {
-    ...mapState('relationTypes', {
-      availableRelationTypes: state => state.available
-    }),
-    ...mapState('people', {
-      availablePeople: state => state.available
-    }),
-    availablePeopleWithoutFocused  () {
-      const focused = this.$store.state.people.active.id
-      return this.availablePeople.filter(person => person.id !== focused)
-    },
-    additionalInfo: {
-      get () { return this.$store.state.relatedTo.value },
-      set (value) { this.$store.commit('relatedTo/setValue', value) }
+    selectedRelationType () {
+      return this.relationTypes.find(rType => rType.id === this.newRelation.relationTypeId)
     },
     filteredPeople () {
       return this.searchPersonName === ''
-        ? this.availablePeopleWithoutFocused
+        ? this.people
         : this.peopleSearch.search(this.searchPersonName)
     },
     filteredRelationTypes () {
       return this.searchRelationType === ''
-        ? this.availableRelationTypes
+        ? this.relationTypes
         : this.relationTypeSearch.search(this.searchRelationType)
     },
     relationExists () {
       if (this.searchRelationType === '') return true
-      return this.availableRelationTypes.map(relationType => relationType.name).includes(this.searchRelationType)
+      return this.relationTypes.map(relationType => relationType.name).includes(this.searchRelationType)
     },
     noRelationYet () {
-      return this.availableRelationTypes.length === 0 && this.searchRelationType === ''
+      return this.relationTypes.length === 0 && this.searchRelationType === ''
     },
     noOtherPersonYet () {
-      return this.availablePeopleWithoutFocused.length === 0 && this.searchPersonName === ''
+      return this.people.length === 0 && this.searchPersonName === ''
     }
   },
   async beforeMount () {
-    await this.$store.dispatch('relationTypes/loadAvailable')
-    await this.$store.dispatch('people/loadAvailable')
-    this.relationTypeSearch = new Fuse(this.availableRelationTypes, {
+    // pre-set first person
+    this.newRelation.firstPersonId = this.personId
+
+    // load data
+    const { data: relationTypes } = await this.axios.get('components/add-relation/relation-types')
+    const { data: people } = await this.axios.get('people')
+
+    // store locally
+    this.relationTypes = relationTypes
+    this.people = people
+
+    // set up search functions
+    this.relationTypeSearch = new Fuse(this.relationTypes, {
       keys: ['name']
     })
-    this.peopleSearch = new Fuse(this.availablePeopleWithoutFocused, {
+    this.peopleSearch = new Fuse(this.people, {
       keys: ['firstName', 'lastName']
     })
   },
   methods: {
     setPerson (person) {
-      console.log('setting second person ', person)
-      this.$store.commit('relatedTo/setSecond', person.id)
-
-      // for the user: fix text
+      this.newRelation.secondPersonId = person.id
       this.searchPersonName = `${person.lastName}, ${person.firstName}`
-
-      // close search
       this.searchingPersonName = false
     },
     createNewRelationType () {
-      console.log('creating new relation type')
-      this.searchingRelationType = false
-      this.$store.commit('relationTypes/setNewName', this.searchRelationType)
-      this.$router.push('/add-relation')
+      this.$router.push(`/add-relation?name=${this.searchRelationType}&personId=${this.personId}`)
     },
     blurRelationType () {
-      console.log('blurring relation type search')
       this.searchingRelationType = false
     },
     blurPerson () {
-      console.log('blurring person search')
       this.searchingPersonName = false
     },
     setRelationType (type) {
-      console.log('selecting relation type: ', type)
-      this.$store.commit('relatedTo/setRelationType', type.id)
-      this.selectedRelationType = type
-
-      // close search
-      this.searchingRelationType = false
-
-      // for the user: fix text
+      this.newRelation.relationTypeId = type.id
       this.searchRelationType = type.name
-    },
-    save () {
       this.searchingRelationType = false
-      this.searchRelationType = ''
-      this.$emit('add')
+    },
+    async save () {
+      // add remote
+      const { data } = await this.axios.post('relations', this.newRelation)
+
+      // emit to add local
+      this.$emit('add', data.id)
+
+      // notify user
+      this.$notify({
+        type: 'success',
+        text: `Added relation ${this.selectedRelationType.name}`
+      })
     }
   }
 }

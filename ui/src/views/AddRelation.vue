@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="header">
+    <h1 class="mb-4">
       Add Relation
     </h1>
     <div class="fields">
@@ -8,7 +8,7 @@
         <label for="relation-name">Relation Name</label>
         <input
           id="relation-name"
-          v-model="relationName"
+          v-model="newRelationType.name"
           type="text"
           placeholder="Relation Name"
         >
@@ -48,7 +48,7 @@
 
           <!-- note: no category available yet -->
           <li
-            v-if="availableRelationCategories.length === 0 && searchRelationCategory === ''"
+            v-if="relationCategories.length === 0 && searchRelationCategory === ''"
             class="no-select"
           >
             <span class="italic text-gray-500">no relation category available, yet.</span>
@@ -57,10 +57,10 @@
       </div>
     </div>
     <div class="fields">
-      <div class="field">
+      <div class="field flex flex-row items-center">
         <input
           id="is-bidirectional"
-          v-model="isBidirectional"
+          v-model="newRelationType.isBidirectional"
           type="checkbox"
         >
         <label for="is-bidirectional">Bidirectional</label>
@@ -68,11 +68,11 @@
       <div
         class="field"
         :style="{
-          visibility: !isBidirectional ? 'visible' : 'hidden'
+          visibility: !newRelationType.isBidirectional ? 'visible' : 'hidden'
         }"
       >
         <input
-          v-model="reverseName"
+          v-model="newRelationType.reverseName"
           type="text"
           placeholder="Reverse Name"
         >
@@ -90,13 +90,20 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
 import Fuse from 'fuse.js'
 import { directive as OnClickaway } from 'vue-clickaway'
 
 export default {
   directives: { OnClickaway },
   data: () => ({
+    personId: 0,
+    relationCategories: [],
+    newRelationType: {
+      name: '',
+      isBidirectional: false,
+      reverseName: '',
+      relationCategoryId: 0
+    },
     searchingRelationDataType: false,
     searchingRelationCategory: false,
     searchRelationCategory: '',
@@ -105,80 +112,72 @@ export default {
     }
   }),
   computed: {
-    ...mapState('relationCategories', {
-      availableRelationCategories: state => state.available
-    }),
-    ...mapState('relationTypes', {
-      newRelation: state => state.new
-    }),
-    isBidirectional: {
-      get () { return this.$store.state.relationTypes.new.isBidirectional },
-      set (value) { this.$store.commit('relationTypes/setNewBidirectional', value) }
-    },
-    relationName: {
-      get () { return this.$store.state.relationTypes.new.name },
-      set (name) { this.$store.commit('relationTypes/setNewName', name) }
-    },
-    reverseName: {
-      get () { return this.$store.state.relationTypes.new.reverseName },
-      set (name) { this.$store.commit('relationTypes/setNewReverseName', name) }
-    },
     filteredRelationCategories () {
       return this.searchRelationCategory === ''
-        ? this.availableRelationCategories
+        ? this.relationCategories
         : this.relationCategorySearch.search(this.searchRelationCategory)
     },
     categoryExists () {
       if (this.searchRelationCategory === '') return true
-      return this.availableRelationCategories.map(relationCategory => relationCategory.name).includes(this.searchingRelationCategory)
+      return this.relationCategories.map(relationCategory => relationCategory.name).includes(this.searchingRelationCategory)
     },
     saveable () {
-      return this.newRelation.name !== '' &&
-        this.newRelation.relationCategory !== 0
+      return this.newRelationType.name !== '' &&
+        this.newRelationType.relationCategoryId !== 0
     }
   },
   async beforeMount () {
+    // pre-set name if possible
+    const { name } = this.$route.query
+    if (name) this.newRelationType.name = name
+
     // set up categories
-    await this.$store.dispatch('relationCategories/loadAvailable')
-    this.relationCategorySearch = new Fuse(this.availableRelationCategories, {
+    const { data: categories } = await this.axios.get('relation-categories')
+    this.relationCategories = categories
+    this.relationCategorySearch = new Fuse(this.relationCategories, {
       keys: ['name']
     })
   },
   methods: {
     async createNewRelationCategory () {
-      console.log('creating new relation category')
       this.searchingRelationCategory = false
-      this.$store.commit('relationCategories/setNewName', this.searchRelationCategory)
-      const categoryId = await this.$store.dispatch('relationCategories/store')
-      console.log('new category id: ', categoryId)
 
-      // set category id
-      this.$store.commit('relationTypes/setNewCategory', categoryId)
+      // add remote
+      const { data } = this.axios.post('relation-categories', { name: this.searchRelationCategory })
+
+      // add local
+      this.relationCategories.push(data)
+
+      // set active
+      this.newRelationType.relationCategoryId = data.id
     },
     blurSearchRelationCategory () {
       this.searchingRelationCategory = false
     },
     setRelationCategory (category) {
-      console.log('selecting relation data category: ', category)
-      this.$store.commit('relationTypes/setNewCategory', category.id)
-
-      // for the user: fix text
+      this.newRelationType.relationCategoryId = category.id
       this.searchRelationCategory = category.name
-
-      // close dropdown
       this.searchingRelationCategory = false
     },
     async storeRelation () {
       if (!this.saveable) return
-      await this.$store.dispatch('relationTypes/store')
+
+      // add remote
+      await this.axios.post('relation-types', this.newRelationType)
 
       // return to active if possible
-      const id = this.$store.state.people.active.id
+      const id = this.$route.query.personId
       if (id !== 0) {
         this.$router.push(`/person/${id}`)
       } else {
         this.$router.push('/add-person')
       }
+
+      // notify user
+      this.$notify({
+        type: 'success',
+        text: `Created relation type ${this.newRelationType.name}`
+      })
     }
   }
 }

@@ -104,7 +104,7 @@ export default {
     }
   },
   async beforeMount () {
-    const { data } = await this.axios.get('/components/add-property/property-types')
+    const { data } = await this.axios.get('components/add-property/property-types')
     this.propertyTypes = data
     this.propertyTypeSearch = new Fuse(this.propertyTypes, {
       keys: ['name']

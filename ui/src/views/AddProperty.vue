@@ -95,7 +95,6 @@ import { directive as OnClickaway } from 'vue-clickaway'
 export default {
   directives: { OnClickaway },
   data: () => ({
-    personId: 0,
     propertyDataTypes: [],
     propertyCategories: [],
     propertyTypes: [],
@@ -141,9 +140,6 @@ export default {
   async beforeMount () {
     // pre-set name if available
     if (this.$route.query.name) this.newPropertyType.name = this.$route.query.name
-
-    // pre-set person if possible
-    if (this.$route.query.personId) this.personId = this.$route.query.personId
 
     // set up data types
     const { data: dataTypes } = await this.axios.get('property-data-types')
@@ -203,7 +199,7 @@ export default {
         this.$router.push('/add-person')
       }
 
-      // dispatch notification
+      // notify user
       this.$notify({
         type: 'success',
         text: `Added property type ${this.newPropertyType.name}`

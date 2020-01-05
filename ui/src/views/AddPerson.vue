@@ -42,34 +42,25 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
   data: () => ({
     addingProperty: false,
-    addingRelation: false
+    addingRelation: false,
+    newPerson: {
+      firstName: '',
+      lastName: ''
+    }
   }),
   computed: {
-    ...mapGetters({
-      getPerson: 'people/getPerson'
-    }),
-    firstName: {
-      get () { return this.$store.state.people.new.firstName },
-      set (firstName) { this.$store.commit('people/setFirstName', firstName) }
-    },
-    lastName: {
-      get () { return this.$store.state.people.new.lastName },
-      set (lastName) { this.$store.commit('people/setLastName', lastName) }
-    },
     saveable () { return this.lastName !== '' && this.firstName !== '' }
   },
   methods: {
     async storePerson (repeat = false) {
       if (!this.saveable) return
-      const { id } = await this.$store.dispatch('people/store')
+      const { data } = await this.axios.post('people', this.newPerson)
       if (!repeat) {
         // redirect
-        this.$router.push(`/person/${id}`)
+        this.$router.push(`/person/${data.id}`)
       }
     }
   }
