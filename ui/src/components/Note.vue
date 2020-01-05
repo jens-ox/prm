@@ -128,6 +128,9 @@ export default {
 
       // notify user
       this.$success('Updated note')
+
+      // close modal
+      this.showNote = false
     },
     closeModal () {
       this.showModal = false
