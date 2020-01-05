@@ -200,10 +200,7 @@ export default {
       }
 
       // notify user
-      this.$notify({
-        type: 'success',
-        text: `Added property type ${this.newPropertyType.name}`
-      })
+      this.$success(`Added property type ${this.newPropertyType.name}`)
     }
   }
 }

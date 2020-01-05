@@ -232,10 +232,7 @@ export default {
         })
       }
 
-      this.$notify({
-        type: 'success',
-        text: 'Successfully stored diary entry.'
-      })
+      this.$success('Successfully stored diary entry.')
     },
     upHandler () {
       this.navigatedUserIndex = ((this.navigatedUserIndex + this.filteredUsers.length) - 1) % this.filteredUsers.length

@@ -36,6 +36,16 @@ library.add(faPlus, faSave, faArrowsAltH, faAlignJustify, faTrashAlt, faTimes, f
 Vue.config.productionTip = false
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+// set up notification shortcuts
+Vue.prototype.$success = text => Vue.notify({
+  type: 'success',
+  text
+})
+Vue.prototype.$error = text => Vue.notify({
+  type: 'error',
+  text
+})
+
 new Vue({
   router,
   store,

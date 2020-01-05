@@ -131,10 +131,7 @@ export default {
       this.$emit('add', data.id)
 
       // notify user
-      this.$notify({
-        type: 'success',
-        text: `Added property ${this.selectedPropertyType.name}`
-      })
+      this.$success(`Added property ${this.selectedPropertyType.name}`)
     }
   }
 }

@@ -86,10 +86,7 @@ export default {
       // close modal
       this.showModal = false
       // notify user
-      this.$notify({
-        type: 'success',
-        text: `Removed property ${this.property.name}`
-      })
+      this.$success(`Removed property ${this.property.name}`)
     }
   }
 }

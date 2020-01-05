@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="mb-4">
-      Add Relation
+      Add Relation Type
     </h1>
     <div class="fields">
       <div class="field">
@@ -174,10 +174,7 @@ export default {
       }
 
       // notify user
-      this.$notify({
-        type: 'success',
-        text: `Created relation type ${this.newRelationType.name}`
-      })
+      this.$success(`Created relation type ${this.newRelationType.name}`)
     }
   }
 }

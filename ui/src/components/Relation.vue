@@ -106,6 +106,9 @@ export default {
       await this.axios.delete(`relations/${this.relationId}`)
       // local
       this.$emit('remove')
+
+      // notify user
+      this.$success(`Removed relation ${this.relation.relationType.name}`)
     }
   }
 }

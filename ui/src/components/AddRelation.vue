@@ -205,10 +205,7 @@ export default {
       this.$emit('add', data.id)
 
       // notify user
-      this.$notify({
-        type: 'success',
-        text: `Added relation ${this.selectedRelationType.name}`
-      })
+      this.$success(`Added relation ${this.selectedRelationType.name}`)
     }
   }
 }

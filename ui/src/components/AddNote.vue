@@ -57,10 +57,7 @@ export default {
       this.$emit('add', data.id)
 
       // notify user
-      this.$notify({
-        type: 'success',
-        text: 'Added note'
-      })
+      this.$success('Added note')
     }
   }
 }
