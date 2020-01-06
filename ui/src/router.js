@@ -35,11 +35,11 @@ export default new Router({
     },
     {
       path: '/diary/new',
-      component: () => import(/* webpackChunkName: "diaryNew" */ './views/NewDiary.vue')
+      component: () => import(/* webpackChunkName: "diaryEntry" */ './views/DiaryEntry.vue')
     },
     {
       path: '/diary/:id',
-      component: () => import(/* webpackChunkName: "diaryNew" */ './views/NewDiary.vue')
+      component: () => import(/* webpackChunkName: "diaryEntry" */ './views/DiaryEntry.vue')
     }
   ]
 })

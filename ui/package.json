@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^1.2.0",
+    "@johmun/vue-tags-input": "^2.1.0",
     "@vue/cli-plugin-babel": "^3.9.0",
     "@vue/cli-plugin-eslint": "^3.9.0",
     "@vue/cli-plugin-pwa": "^3.9.0",

@@ -39,6 +39,7 @@ app.use('/notes', require('./routes/notes'))
 
 // -- diary
 app.use('/diary', require('./routes/diary'))
+app.use('/tags', require('./routes/tags'))
 
 // -- views
 app.use('/views', require('./routes/views'))

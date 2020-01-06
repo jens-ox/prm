@@ -11,10 +11,20 @@
         class="text-lg border-0 border-b w-full rounded-none"
       >
     </div>
-    <div class="editor">
+    <div class="editor mb-4">
+      <label>Entry:</label>
       <editor-content
         class="container p-2"
         :editor="editor"
+      />
+    </div>
+    <div>
+      <label>Tags:</label>
+      <vue-tags-input
+        v-model="tag"
+        :autocomplete-items="availableTags"
+        :tags="tags"
+        @tags-changed="updateTags"
       />
     </div>
 
@@ -68,9 +78,10 @@ import {
   Bold,
   Italic
 } from 'tiptap-extensions'
+import VueTagsInput from '@johmun/vue-tags-input'
 
 export default {
-  components: { EditorContent },
+  components: { EditorContent, VueTagsInput },
   data () {
     return {
       newEntry: {
@@ -78,6 +89,9 @@ export default {
         text: '',
         date: ''
       },
+      tag: '',
+      availableTags: [],
+      tags: [],
       people: [],
       query: null,
       suggestionRange: null,
@@ -179,7 +193,9 @@ export default {
   },
   async beforeMount () {
     const { data: people } = await this.axios.get('people')
+    const { data: tags } = await this.axios.get('tags')
     this.people = people
+    this.availableTags = tags
 
     // check if content is pre-set
     if (this.diaryId) {
@@ -188,18 +204,48 @@ export default {
       console.log('pre-loaded entry: ', entry)
       this.newEntry = entry
 
+      // load tags
+      const { data: tags } = await this.axios.get(`views/diary-entry/${this.diaryId}/tags`)
+      this.tags = tags
+
       // pre-set content
       this.editor.setContent(JSON.parse(this.newEntry.text))
     }
   },
 
   methods: {
+    async updateTags (newTags) {
+      // loopback: set tags for tag view
+      this.tags = newTags.map(({ id, text }) => ({ id, text }))
+    },
+    async addOrUpdateTags (diaryId) {
+      console.log('adding or updating tags: ', diaryId, this.tags)
+
+      // first, delete existing tags if any
+      await this.axios.delete(`views/diary-entry/${diaryId}/tags`)
+
+      // second, create tags that don't have any id and associate all to diary entry
+      this.tags.map(async tag => {
+        if (typeof tag.id === 'undefined') {
+          const { data: newTag } = await this.axios.post('tags', { text: tag.text })
+          tag.id = newTag.id
+        }
+        await this.axios.post(`views/diary-entry/${diaryId}/add-tag`, { id: tag.id })
+      })
+    },
     async save () {
+      let id = this.diaryId
+
       // case 1: new entry
-      if (!this.diaryId) await this.axios.post('/diary', this.newEntry)
+      if (!this.diaryId) {
+        const { data: diary } = await this.axios.post('/diary', this.newEntry)
+        id = diary.id
 
       // case 2: update existing entry
-      else await this.axios.put(`/diary/${this.diaryId}`, this.newEntry)
+      } else await this.axios.put(`/diary/${this.diaryId}`, this.newEntry)
+
+      // set tags
+      this.addOrUpdateTags(id)
 
       this.$success('Successfully stored diary entry.')
     },

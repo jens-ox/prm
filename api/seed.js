@@ -128,6 +128,26 @@ module.exports = async () => {
     })
   }
 
+  // tag
+  const hasTag = await knex.schema.hasTable('tag')
+  if (!hasTag) {
+    console.log('creating table tag')
+    await knex.schema.createTable('tag', table => {
+      table.bigIncrements('id')
+      table.text('text')
+    })
+  }
+
+  // diaryHasTag
+  const hasDiaryHasTag = await knex.schema.hasTable('diaryHasTag')
+  if (!hasDiaryHasTag) {
+    console.log('creating table diaryHasTag')
+    await knex.schema.createTable('diaryHasTag', table => {
+      table.bigInteger('diaryId').references('id').inTable('diary')
+      table.bigInteger('tagId').references('id').inTable('tag')
+    })
+  }
+
   // mentioned
   const hasMentioned = await knex.schema.hasTable('mentioned')
   if (!hasMentioned) {
