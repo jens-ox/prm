@@ -143,7 +143,7 @@ export default {
       this.searchingRelationCategory = false
 
       // add remote
-      const { data } = this.axios.post('relation-categories', { name: this.searchRelationCategory })
+      const { data } = await this.axios.post('relation-categories', { name: this.searchRelationCategory })
 
       // add local
       this.relationCategories.push(data)

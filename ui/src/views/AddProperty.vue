@@ -160,7 +160,7 @@ export default {
       this.searchingPropertyCategory = false
 
       // add remote
-      const { data } = this.axios.post('property-categories', { name: this.searchPropertyCategory })
+      const { data } = await this.axios.post('property-categories', { name: this.searchPropertyCategory })
 
       // add local
       this.propertyCategories.push(data)
