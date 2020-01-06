@@ -8,14 +8,14 @@
     <div class="fields">
       <div class="field">
         <input
-          v-model="firstName"
+          v-model="newPerson.firstName"
           type="text"
           placeholder="First Name"
         >
       </div>
       <div class="field">
         <input
-          v-model="lastName"
+          v-model="newPerson.lastName"
           type="text"
           placeholder="Last Name"
         >
@@ -52,15 +52,23 @@ export default {
     }
   }),
   computed: {
-    saveable () { return this.lastName !== '' && this.firstName !== '' }
+    saveable () { return this.newPerson.lastName !== '' && this.newPerson.firstName !== '' }
   },
   methods: {
     async storePerson (repeat = false) {
       if (!this.saveable) return
       const { data } = await this.axios.post('people', this.newPerson)
+
+      // notify user
+      this.$success(`Created person ${this.newPerson.lastName}, ${this.newPerson.firstName}`)
+
       if (!repeat) {
         // redirect
         this.$router.push(`/person/${data.id}`)
+      } else {
+        // clear input
+        this.newPerson.firstName = ''
+        this.newPerson.lastName = ''
       }
     }
   }
