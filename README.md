@@ -19,6 +19,7 @@ Early alpha. Base structures are more or less done. See "Next" for next steps.
 
 * Yearly calendar: When did I use which tag in my diary entry? --> track things like workouts
 * Yearly calendar: Date-based properties
+* Timeline: When did I spend time with whom? (= when did I tag whom in my diary)
 * Per property: overview page (e.g. page of all phone numbers)
 * Editable relationship graph
 * Previous/next buttons when viewing a diary entry
