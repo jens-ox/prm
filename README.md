@@ -2,6 +2,9 @@
 
 Keep track of what you're doing and the people in your life.
 
+## State
+
+Early alpha. Base structures are more or less done. See "Next" for next steps.
 
 ## Features
 
