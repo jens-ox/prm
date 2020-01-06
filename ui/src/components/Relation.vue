@@ -12,7 +12,10 @@
     </button>
 
     <!-- content -->
-    <router-link :to="`/person/${relatedPerson.id}`">
+    <router-link
+      :to="`/person/${relatedPerson.id}`"
+      @click.native="$event.stopImmediatePropagation()"
+    >
       {{ relatedPerson.lastName }}, {{ relatedPerson.firstName }}
     </router-link>: {{ relation.relationType.name }} <br>
     <p
