@@ -121,4 +121,13 @@ diary.delete('/:id', async (req, res, next) => {
   res.json(result)
 })
 
+/**
+ * GET /search/:term: search diary entry
+ */
+diary.get('/search/:term', async (req, res, next) => {
+  const term = req.params.term
+  const result = await knex('diary').where('text', 'like', `%${term}%`)
+  res.json(result)
+})
+
 module.exports = diary
