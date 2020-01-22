@@ -14,6 +14,7 @@ Early alpha. Base structures are more or less done. See "Next" for next steps.
 * Add diary entries
 * Tag people in diary entries
 * Add tags to diary entries
+* Search diary entries
 
 ## Next
 
@@ -23,7 +24,6 @@ Early alpha. Base structures are more or less done. See "Next" for next steps.
 * Per property: overview page (e.g. page of all phone numbers)
 * Editable relationship graph
 * Previous/next buttons when viewing a diary entry
-* Full-text diary search
 * Overview page: diary tags
 
 ## Develop and use
