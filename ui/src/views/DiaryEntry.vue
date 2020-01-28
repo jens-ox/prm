@@ -60,7 +60,46 @@
         <span v-if="!diaryId">Save</span>
         <span v-else>Update</span>
       </button>
+      <button
+        v-if="diaryId"
+        class="secondary large font-bold"
+        @click="showModal = true"
+      >
+        Delete
+      </button>
     </div>
+
+    <!-- view and edit property modal -->
+    <div
+      v-show="showModal"
+      class="modal cursor-default"
+    >
+      <header>
+        <h3>Delete entry</h3>
+      </header>
+      <section>
+        <p>Are you sure you want to delete this diary entry?</p>
+      </section>
+      <div class="actions flex justify-between">
+        <button
+          class="large"
+          @click="showModal = false"
+        >
+          Cancel
+        </button>
+        <button
+          class="primary large danger"
+          @click="remove"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+    <div
+      v-if="showModal"
+      class="backdrop"
+      @click.stop="showModal = false"
+    />
   </div>
 </template>
 
@@ -84,6 +123,7 @@ export default {
   components: { EditorContent, VueTagsInput },
   data () {
     return {
+      showModal: false,
       newEntry: {
         id: 0,
         text: '',
@@ -214,6 +254,16 @@ export default {
   },
 
   methods: {
+    async remove () {
+      // remote
+      await this.axios.delete(`diary/${this.diaryId}`)
+      // close modal
+      this.showModal = false
+      // notify user
+      this.$success(`Removed diary entry`)
+      // redirect to diary overview
+      this.$router.push('/diary')
+    },
     async updateTags (newTags) {
       // loopback: set tags for tag view
       this.tags = newTags.map(({ id, text }) => ({ id, text }))
