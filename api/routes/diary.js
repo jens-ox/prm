@@ -116,9 +116,15 @@ diary.delete('/:id', async (req, res, next) => {
   const id = req.params.id
   if (!id) return next(new Error('no id set'))
 
-  const result = await knex('diary').where('id', id).del()
+  await knex('diary').where('id', id).del()
 
-  res.json(result)
+  // delete tag relations
+  await knex('diaryHasTag').where('diaryId', id).del()
+
+  // delete mentions
+  await knex('mentioned').where('diaryId', id).del()
+
+  res.json({})
 })
 
 /**
