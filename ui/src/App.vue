@@ -33,6 +33,14 @@
             Diary
           </router-link>
         </li>
+        <li>
+          <router-link
+            to="/tags"
+            class="link-nav"
+          >
+            Tags
+          </router-link>
+        </li>
       </ul>
     </div>
     <router-view class="router-view container" />

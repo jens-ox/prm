@@ -40,6 +40,14 @@ export default new Router({
     {
       path: '/diary/:id',
       component: () => import(/* webpackChunkName: "diaryEntry" */ './views/DiaryEntry.vue')
+    },
+    {
+      path: '/tags',
+      component: () => import(/* webpackChunkName: "tags" */ './views/Tags.vue')
+    },
+    {
+      path: '/tag/:id',
+      component: () => import(/* webpackChunkName: "tag" */ './views/Tag.vue')
     }
   ]
 })
