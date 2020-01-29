@@ -48,6 +48,10 @@ export default new Router({
     {
       path: '/tag/:id',
       component: () => import(/* webpackChunkName: "tag" */ './views/Tag.vue')
+    },
+    {
+      path: '/properties',
+      component: () => import(/* webpackChunkName: "properties" */ './views/Properties.vue')
     }
   ]
 })

@@ -2,6 +2,14 @@ const knex = require('../knex')
 const properties = require('express').Router()
 
 /**
+ * GET /: get available properties
+ */
+properties.get('/', async (req, res, next) => {
+  const result = await knex('propertyType')
+  res.json(result)
+})
+
+/**
  * POST /: create new property
  *
  * Body:

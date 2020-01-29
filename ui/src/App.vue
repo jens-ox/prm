@@ -19,6 +19,14 @@
         </li>
         <li>
           <router-link
+            to="/properties"
+            class="link-nav"
+          >
+            Properties
+          </router-link>
+        </li>
+        <li>
+          <router-link
             to="/relations"
             class="link-nav"
           >
