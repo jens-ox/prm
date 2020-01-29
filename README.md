@@ -1,23 +1,30 @@
+![Screenshot of Person view](./.img/screenshot1.png)
+
 ## What?
 
 Keep track of what you're doing and the people in your life.
 
 ## State
 
-Alpha. Base structures are done. See "Next" for next steps.
+Early alpha. Base structures are more or less done. See "Next" for next steps.
 
 ## Features
 
-* Create people
-* Add properties to them
-* Add relations between people
-* Add diary entries
-* Tag people in diary entries
-* Add tags to diary entries
-* Search diary entries
-* Overview page: diary tags
-* Yearly calendar: When did I use which tag in my diary entry? --> track things like workouts
-* Timeline: When did I spend time with whom? (= when did I tag whom in my diary)
+### Organize people and relations
+
+Create people and add properties and relations between them. Write down notes on a person.
+
+### Write a journal and tag people in it
+
+Write something down about your day and with whom you interacted. View all entries of the last year which include a specific person on the person's overview page (see above).
+
+### Track habits
+
+Add tags to your diary entries. There's an overview page per tag, which lets you see on which days you used a specific tag throughout the last year.
+
+### Other things
+
+Search for stuff like people, tags and diary entries.
 
 ## Next
 
@@ -25,7 +32,6 @@ Alpha. Base structures are done. See "Next" for next steps.
 * Per property: overview page (e.g. page of all phone numbers)
 * Editable relationship graph
 * Previous/next buttons when viewing a diary entry
-* Search for properties (and values)
 
 ## Develop and use
 
