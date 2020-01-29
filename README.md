@@ -4,7 +4,7 @@ Keep track of what you're doing and the people in your life.
 
 ## State
 
-Early alpha. Base structures are more or less done. See "Next" for next steps.
+Alpha. Base structures are done. See "Next" for next steps.
 
 ## Features
 
@@ -15,16 +15,17 @@ Early alpha. Base structures are more or less done. See "Next" for next steps.
 * Tag people in diary entries
 * Add tags to diary entries
 * Search diary entries
+* Overview page: diary tags
 * Yearly calendar: When did I use which tag in my diary entry? --> track things like workouts
+* Timeline: When did I spend time with whom? (= when did I tag whom in my diary)
 
 ## Next
 
 * Yearly calendar: Date-based properties
-* Timeline: When did I spend time with whom? (= when did I tag whom in my diary)
 * Per property: overview page (e.g. page of all phone numbers)
 * Editable relationship graph
 * Previous/next buttons when viewing a diary entry
-* Overview page: diary tags
+* Search for properties (and values)
 
 ## Develop and use
 
