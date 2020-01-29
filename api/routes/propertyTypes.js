@@ -34,8 +34,6 @@ propertyTypes.post('/', async (req, res, next) => {
   // check that base parameters are set
   if (!name) return next(new Error('no name set'))
 
-  console.log(name, propertyCategoryId)
-
   // insert property type
   const result = await knex('propertyType').insert({ name, propertyCategoryId, propertyDataTypeId })
   const id = result[0]

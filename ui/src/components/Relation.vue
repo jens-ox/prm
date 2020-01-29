@@ -145,7 +145,6 @@ export default {
   methods: {
     async load () {
       const { data } = await this.axios.get(`components/relation/${this.relationId}`)
-      console.log('loaded relation: ', data)
       this.relation = data
     },
     async update () {

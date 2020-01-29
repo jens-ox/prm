@@ -58,11 +58,12 @@ export default {
     },
     async clickedDay ({ date }) {
       // TODO this mitigates weirdness in vue-calendar-heatmap and needs to be removed
-      date.setDate(date.getDate() + 1)
-      this.date = date.toISOString().split('T')[0]
+      const localDate = new Date(date)
+      localDate.setDate(localDate.getDate() + 1)
+      this.date = localDate.toISOString().split('T')[0]
 
       // load entries for this date
-      const { data: entries } = await this.axios.get(`views/tag/by-date/${this.date}`)
+      const { data: entries } = await this.axios.get(`views/tag/${this.id}/by-date/${this.date}`)
       this.diaryEntries = entries
     }
   }

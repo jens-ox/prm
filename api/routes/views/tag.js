@@ -30,13 +30,18 @@ tag.get('/:id', async (req, res, next) => {
 })
 
 /**
- * GET /views/tag/by-date/:date: get all diary entries for a given date
+ * GET /views/tag/:id/by-date/:date: get all diary entries for a given date
  *
  * Query params:
+ * - id: tag id
  * - date: date string (e.g. 2020-01-28)
  */
-tag.get('/by-date/:date', async (req, res, next) => {
-  const entries = await knex('diary').where('date', req.params.date)
+tag.get('/:id/by-date/:date', async (req, res, next) => {
+  const entries = await knex('diaryHasTag')
+    .select('diary.*')
+    .join('diary', 'diaryHasTag.diaryId', 'diary.id')
+    .where('date', req.params.date)
+    .andWhere('tagId', parseInt(req.params.id))
   res.json(entries)
 })
 

@@ -241,7 +241,6 @@ export default {
     if (this.diaryId) {
       // load content
       const { data: entry } = await this.axios.get(`diary/${this.diaryId}`)
-      console.log('pre-loaded entry: ', entry)
       this.newEntry = entry
 
       // load tags
@@ -269,8 +268,6 @@ export default {
       this.tags = newTags.map(({ id, text }) => ({ id, text }))
     },
     async addOrUpdateTags (diaryId) {
-      console.log('adding or updating tags: ', diaryId, this.tags)
-
       // first, delete existing tags if any
       await this.axios.delete(`views/diary-entry/${diaryId}/tags`)
 

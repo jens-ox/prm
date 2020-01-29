@@ -4,6 +4,15 @@
       {{ person.lastName }}, {{ person.firstName }}
     </h1>
 
+    <!-- calendar -->
+    <section>
+      <calendar-heatmap
+        :values="values"
+        :end-date="currentDate"
+        @day-click="clickedDay"
+      />
+    </section>
+
     <!-- properties -->
     <header class="max-w-xl">
       <h3>Properties</h3>
@@ -118,7 +127,7 @@
 
     <!-- diary entries -->
     <header>
-      <h3>Diary Entries</h3>
+      <h3>Diary Entries <span v-if="date !== ''">({{ date }})</span></h3>
     </header>
     <section class="max-w-xl">
       <div v-if="person.diaries.length > 0">
@@ -145,13 +154,16 @@ import Note from '@/components/Note.vue'
 import Relation from '@/components/Relation.vue'
 import Property from '@/components/Property.vue'
 import DiaryPreview from '@/components/DiaryPreview.vue'
+import { CalendarHeatmap } from 'vue-calendar-heatmap'
 
 export default {
-  components: { AddProperty, AddRelation, AddNote, Note, Relation, Property, DiaryPreview },
+  components: { AddProperty, AddRelation, AddNote, Note, Relation, Property, DiaryPreview, CalendarHeatmap },
   data: () => ({
     addingProperty: false,
     addingRelation: false,
     addingNote: false,
+    values: [],
+    date: '',
     person: {
       id: 0,
       firstName: '',
@@ -163,7 +175,8 @@ export default {
     }
   }),
   computed: {
-    id () { return parseInt(this.$route.params.id) }
+    id () { return parseInt(this.$route.params.id) },
+    currentDate () { return new Date().toISOString().split('T')[0] }
   },
   watch: {
     $route (to, from) {
@@ -174,10 +187,20 @@ export default {
     this.loadPerson()
   },
   methods: {
+    async clickedDay ({ date }) {
+      // TODO this mitigates weirdness in vue-calendar-heatmap and needs to be removed
+      const localDate = new Date(date)
+      localDate.setDate(localDate.getDate() + 1)
+      this.date = localDate.toISOString().split('T')[0]
+
+      // load entries for this date
+      const { data: entries } = await this.axios.get(`views/person/${this.id}/by-date/${this.date}`)
+      this.person.diaries = entries
+    },
     async loadPerson () {
-      const { data } = await this.axios.get(`views/person/${this.id}`)
-      console.log('loaded person: ', data)
-      this.person = data
+      const { data: { person, values } } = await this.axios.get(`views/person/${this.id}`)
+      this.person = person
+      this.values = values
     },
 
     // properties
@@ -187,7 +210,6 @@ export default {
       this.addingProperty = false
     },
     removeProperty (id) {
-      console.log('removing prop ', id, ' from prop list ', this.person.properties)
       this.person.properties = this.person.properties.filter(prop => prop !== id)
     },
 

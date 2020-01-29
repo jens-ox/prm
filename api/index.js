@@ -6,7 +6,7 @@ const app = express()
 const port = 3000
 
 initialize()
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => console.log(`PRM API on port ${port}!`))
 
 // body handling
 app.use(bodyParser.json())

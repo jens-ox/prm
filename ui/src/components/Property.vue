@@ -108,7 +108,6 @@ export default {
   methods: {
     async load () {
       const { data } = await this.axios.get(`components/property/${this.propertyId}`)
-      console.log('loaded property: ', data)
       this.property = data
     },
     async remove () {

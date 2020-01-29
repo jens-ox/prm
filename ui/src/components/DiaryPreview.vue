@@ -44,7 +44,6 @@ export default {
   },
   async beforeMount () {
     const { data } = await this.axios.get(`diary/${this.diaryId}`)
-    console.log('loaded diary: ', data)
     this.entry = data
     this.editor = new Editor({
       editable: false,

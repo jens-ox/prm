@@ -18,7 +18,6 @@ addRelation.get('/relation-types', async (req, res, next) => {
     .offset(offset)
     .limit(limit)
 
-  console.log('relation types: ', result)
   res.json(result)
 })
 

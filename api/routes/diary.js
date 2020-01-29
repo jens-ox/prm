@@ -2,7 +2,6 @@ const knex = require('../knex')
 const diary = require('express').Router()
 
 const extractMentions = async (diaryObject, mentionArray) => {
-  console.log('parsing diary object: ', diaryObject)
   if (!diaryObject.content) return
   diaryObject.content.forEach(innerObject => {
     if (innerObject.type === 'mention') {
@@ -46,14 +45,11 @@ diary.post('/', async (req, res, next) => {
   if (!text) return next(new Error('no json set'))
   if (!date) date = new Date().toISOString().split('T')[0]
   if (typeof text !== 'string') text = JSON.stringify(text)
-  console.log('json: ', text)
-  console.log('date: ', date)
 
   // extract mentions
   // TODO this needs to be refactored when different things (like places) can be mentioned
   const mentionArray = []
   await extractMentions(text, mentionArray)
-  console.log('mentions: ', mentionArray)
 
   // insert new diary entry
   const result = await knex('diary').insert({ text, date })

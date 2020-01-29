@@ -108,7 +108,6 @@ export default {
   },
   async beforeMount () {
     const { data } = await this.axios.get(`notes/${this.noteId}`)
-    console.log('loaded note: ', data)
     this.note = data
   },
   methods: {

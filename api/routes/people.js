@@ -28,9 +28,7 @@ people.get('/', async (req, res, next) => {
  * - lastName: string
  */
 people.post('/', async (req, res, next) => {
-  console.log(req.body)
   const { firstName, lastName } = req.body
-  console.log('adding person: ', { firstName, lastName })
 
   // check that base parameters are set
   if (!firstName) return next(new Error('no first name set'))
