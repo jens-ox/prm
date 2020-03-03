@@ -64,6 +64,12 @@ yarn serve
 
 ## Run with docker
 ```bash
+# Build image
 docker build . -t prm
-docker run -d -p 8080 -v /somewhere/on/your/host:/app/api/data --name prm prm
+
+# Create persistent data volume
+docker volume create prm
+
+# Start container
+docker run -d -p 8080:8080 -v prm:/app/api/data --name prm prm
 ```

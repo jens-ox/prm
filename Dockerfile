@@ -11,6 +11,7 @@ RUN NODE_ENV=production npm run build
 FROM node:12
 
 WORKDIR /app
+VOLUME /app/api/data
 
 ADD api api
 ADD Caddyfile ./
