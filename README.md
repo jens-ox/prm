@@ -61,3 +61,9 @@ Run UI
 cd prm/ui
 yarn serve
 ```
+
+## Run with docker
+```bash
+docker build . -t prm
+docker run -d -p 8080 -v /somewhere/on/your/host:/app/api/data --name prm prm
+```
