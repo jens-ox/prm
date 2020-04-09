@@ -6,14 +6,14 @@ module.exports = {
   plugins: [
     tailwindcss('./tailwind.js'),
     autoprefixer({
-      add: true,
-      grid: true
+      add: true
     }),
     process.env.NODE_ENV === 'production' ? purgecss({
       content: [
         './src/**/*.html',
         './src/**/*.vue'
-      ]
+      ],
+      whitelist: ['body']
     }) : ''
   ]
 }
