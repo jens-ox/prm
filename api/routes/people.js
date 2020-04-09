@@ -42,4 +42,29 @@ people.post('/', async (req, res, next) => {
   res.json({ id, firstName, lastName })
 })
 
+/**
+ * DELETE /people/:id: delete a person and all related data
+ *
+ * Query params:
+ * - id: person id
+ */
+people.delete('/:id', async (req, res, next) => {
+  const id = req.params.id
+  if (!id) return next(new Error('no id specified'))
+
+  // delete mentions
+  await knex('mentioned').where('personId', id).del()
+
+  // delete notes
+  await knex('note').where('personId', id).del()
+
+  // delete relations
+  await knex('relatedTo').where('firstPersonId', id).orWhere('secondPersonId', id).del()
+
+  // finally, delete person
+  await knex('person').where('id', id).del()
+
+  res.json({})
+})
+
 module.exports = people

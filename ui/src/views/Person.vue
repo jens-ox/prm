@@ -14,6 +14,7 @@
         </router-link>
         <button
           class="secondary"
+          @click.stop="showModal = true"
         >
           <font-awesome-icon icon="trash-alt" />
         </button>
@@ -160,6 +161,40 @@
         no diary entries, yet.
       </p>
     </section>
+
+    <!-- deletion modal -->
+    <div
+      v-show="showModal"
+      class="modal cursor-default"
+    >
+      <header>
+        <h3>Delete Person</h3>
+      </header>
+      <section>
+        <p>
+          Are you sure you want to remove this person?
+        </p>
+      </section>
+      <div class="actions flex justify-between">
+        <button
+          class="large"
+          @click="showModal = false"
+        >
+          Cancel
+        </button>
+        <button
+          class="primary large danger"
+          @click="remove"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+    <div
+      v-if="showModal"
+      class="backdrop"
+      @click.stop="showModal = false"
+    />
   </div>
 </template>
 <script>
@@ -180,6 +215,7 @@ export default {
     addingNote: false,
     values: [],
     date: '',
+    showModal: false,
     person: {
       id: 0,
       firstName: '',
@@ -203,6 +239,16 @@ export default {
     this.loadPerson()
   },
   methods: {
+    async remove () {
+      // remote
+      await this.axios.delete(`people/${this.id}`)
+      // close modal
+      this.showModal = false
+      // notify user
+      this.$success('Removed person')
+      // redirect
+      this.$router.push('/')
+    },
     async clickedDay ({ date }) {
       // TODO this mitigates weirdness in vue-calendar-heatmap and needs to be removed
       const localDate = new Date(date)
