@@ -1,0 +1,12 @@
+http://localhost:8080 {
+	root /app/static
+	gzip {
+		ext *
+		level 5
+	}
+
+	proxy /api http://localhost:3000 {
+		transparent
+		without /api
+	}	
+}

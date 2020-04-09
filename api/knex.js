@@ -1,7 +1,7 @@
 module.exports = require('knex')({
   client: 'sqlite3',
   connection: {
-    filename: './data.db'
+    filename: require('./config').dbPath
   },
   useNullAsDefault: true
 })
