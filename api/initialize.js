@@ -2,7 +2,7 @@ const sqlite = require('sqlite3')
 const fs = require('fs')
 const seed = require('./seed')
 
-const path = './data.db'
+const path = require('./config').dbPath
 
 module.exports = () => {
   // create database if necessary
