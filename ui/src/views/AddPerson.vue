@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="mb-8">
-      Add Person
+      {{ newPerson.id !== -1 ? 'Edit' : 'Add' }} Person
     </h1>
 
     <h3>Base Information</h3>
@@ -32,6 +32,7 @@
         Save Person
       </button>
       <button
+        v-if="newPerson.id === -1"
         class="large"
         :class="{ disabled: !saveable }"
         @click="storePerson(true)"
@@ -47,6 +48,7 @@ export default {
     addingProperty: false,
     addingRelation: false,
     newPerson: {
+      id: -1,
       firstName: '',
       lastName: ''
     }
@@ -54,19 +56,28 @@ export default {
   computed: {
     saveable () { return this.newPerson.lastName !== '' && this.newPerson.firstName !== '' }
   },
+  async beforeMount () {
+    if (this.$route.params.id) {
+      this.newPerson = (await this.axios.get(`views/edit-person/${this.$route.params.id}`)).data
+    }
+  },
   methods: {
     async storePerson (repeat = false) {
       if (!this.saveable) return
-      const { data } = await this.axios.post('people', this.newPerson)
+      const id = this.newPerson.id
+      const { data } = id === -1
+        ? await this.axios.post('people', this.newPerson)
+        : await this.axios.put(`views/edit-person/${id}`, this.newPerson)
 
       // notify user
-      this.$success(`Created person ${this.newPerson.lastName}, ${this.newPerson.firstName}`)
+      this.$success(`${id === -1 ? 'Created' : 'Updated'} person ${this.newPerson.lastName}, ${this.newPerson.firstName}`)
 
       if (!repeat) {
         // redirect
         this.$router.push(`/person/${data.id}`)
       } else {
         // clear input
+        this.newPerson.id = -1
         this.newPerson.firstName = ''
         this.newPerson.lastName = ''
       }

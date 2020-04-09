@@ -1,8 +1,24 @@
 <template>
   <div>
-    <h1 class="mb-8">
-      {{ person.lastName }}, {{ person.firstName }}
-    </h1>
+    <div class="mb-8 flex items-center">
+      <h1 class="inline-block pr-4">
+        {{ person.lastName }}, {{ person.firstName }}
+      </h1>
+      <div class="bar-buttons text-gray-600">
+        <router-link
+          :to="`/edit-person/${id}`"
+          tag="button"
+          class="secondary"
+        >
+          <font-awesome-icon icon="edit" />
+        </router-link>
+        <button
+          class="secondary"
+        >
+          <font-awesome-icon icon="trash-alt" />
+        </button>
+      </div>
+    </div>
 
     <!-- calendar -->
     <section>

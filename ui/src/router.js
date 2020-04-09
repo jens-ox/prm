@@ -18,6 +18,10 @@ export default new Router({
       component: () => import(/* webpackChunkName: "add-person" */ './views/AddPerson.vue')
     },
     {
+      path: '/edit-person/:id',
+      component: () => import(/* webpackChunkName: "add-person" */ './views/AddPerson.vue')
+    },
+    {
       path: '/add-property',
       component: () => import(/* webpackChunkName: "add-property" */ './views/AddProperty.vue')
     },
