@@ -14,7 +14,7 @@ import './assets/style/main.sass'
 Vue.use(Notifications)
 
 // set axios base url
-axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3000'
+axios.defaults.baseURL = 'http://localhost:3000'
 
 // axios error handling
 axios.interceptors.response.use(
